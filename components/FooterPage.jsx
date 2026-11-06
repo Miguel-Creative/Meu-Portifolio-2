@@ -10,7 +10,7 @@ import { SettingsContext } from "@/context/SettingsContext";
 import SocialNetworkRowStack from "@/components/SocialNetworkRowStack";
 
 //Ícones
-import { KeyboardArrowUp } from "@styled-icons/material-outlined/KeyboardArrowUp";
+import { KeyboardArrowUp } from "@styled-icons/material-outlined/KeyboardArrowUp/KeyboardArrowUp";
 
 const FooterContainer = styled.footer`
 	display: flex;

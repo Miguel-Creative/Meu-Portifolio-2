@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
-import { Facebook } from "@styled-icons/entypo-social/Facebook";
-import { Instagram } from "@styled-icons/icomoon/Instagram";
-import { Telegram } from "@styled-icons/boxicons-logos/Telegram";
-import { MailSend } from "@styled-icons/boxicons-regular/MailSend";
-import { LogoWhatsapp } from "@styled-icons/ionicons-solid/LogoWhatsapp";
-import { LinkedinSquare } from "@styled-icons/boxicons-logos/LinkedinSquare";
-import { Github } from "@styled-icons/bootstrap/Github";
+import { Facebook } from "@styled-icons/entypo-social/Facebook/Facebook";
+import { Instagram } from "@styled-icons/icomoon/Instagram/Instagram";
+import { Telegram } from "@styled-icons/boxicons-logos/Telegram/Telegram";
+import { MailSend } from "@styled-icons/boxicons-regular/MailSend/MailSend";
+import { LogoWhatsapp } from "@styled-icons/ionicons-solid/LogoWhatsapp/LogoWhatsapp";
+import { LinkedinSquare } from "@styled-icons/boxicons-logos/LinkedinSquare/LinkedinSquare";
+import { Github } from "@styled-icons/bootstrap/Github/Github";
 
 const SocialMediaContainer = styled.div`
 	display: flex;

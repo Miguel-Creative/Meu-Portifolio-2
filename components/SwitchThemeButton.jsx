@@ -5,8 +5,8 @@ import styled from "styled-components";
 import { SettingsContext } from "@/context/SettingsContext";
 
 //ícones
-import { DarkMode } from "@styled-icons/material-rounded/DarkMode";
-import { LightDown } from "@styled-icons/entypo/LightDown";
+import { DarkMode } from "@styled-icons/material-rounded/DarkMode/DarkMode";
+import { LightDown } from "@styled-icons/entypo/LightDown/LightDown";
 
 const LanguageWrapper = styled.div`
 	display: flex;

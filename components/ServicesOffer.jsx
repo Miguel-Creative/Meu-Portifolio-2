@@ -3,10 +3,10 @@ import styled from "styled-components";
 import ScrollAnimation from "react-animate-on-scroll";
 
 //Styled icons
-import { Robot } from "@styled-icons/fa-solid/Robot";
-import { DesignServices } from "@styled-icons/material-rounded/DesignServices";
-import { DesignIdeas } from "@styled-icons/fluentui-system-filled/DesignIdeas";
-import { CodeBlock } from "@styled-icons/boxicons-regular/CodeBlock";
+import { Robot } from "@styled-icons/fa-solid/Robot/Robot";
+import { DesignServices } from "@styled-icons/material-rounded/DesignServices/DesignServices";
+import { DesignIdeas } from "@styled-icons/fluentui-system-filled/DesignIdeas/DesignIdeas";
+import { CodeBlock } from "@styled-icons/boxicons-regular/CodeBlock/CodeBlock";
 
 //Context
 import { SettingsContext } from "@/context/SettingsContext";

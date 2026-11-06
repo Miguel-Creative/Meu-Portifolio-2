@@ -1,9 +1,8 @@
 import {useEffect} from "react";
-import {startScrollConstruction} from "@/lib/scrollConstruction";
+import {startScrollConstruction} from "../lib/scrollConstruction";
 
 /**
- * This controller changes only the reveal state of the original elements.
- * No replacement markup, opening screen or extension is used.
+ * The controller reveals native elements; it never replaces the original page.
  */
 export default function ScrollConstruction(){
   useEffect(()=>{

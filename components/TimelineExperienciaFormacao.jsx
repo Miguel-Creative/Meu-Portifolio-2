@@ -8,9 +8,9 @@ import "react-vertical-timeline-component/style.min.css";
 import { SettingsContext } from "@/context/SettingsContext";
 
 //ícones
-import { School } from "@styled-icons/ionicons-outline/School";
-import { LearningApp } from "@styled-icons/fluentui-system-filled/LearningApp";
-import { Work } from "@styled-icons/material-rounded/Work";
+import { School } from "@styled-icons/ionicons-outline/School/School";
+import { LearningApp } from "@styled-icons/fluentui-system-filled/LearningApp/LearningApp";
+import { Work } from "@styled-icons/material-rounded/Work/Work";
 
 const LearningAppIcon = styled(LearningApp)`
 	color: ${(props) => props.theme.colors.backgroundSecondary};

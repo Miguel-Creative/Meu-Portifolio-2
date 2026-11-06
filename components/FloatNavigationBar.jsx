@@ -3,11 +3,11 @@ import styled from "styled-components";
 import Link from "next/link";
 
 //Ícones
-import { Home } from "@styled-icons/heroicons-solid/Home";
-import { Code } from "@styled-icons/fluentui-system-regular/Code";
-import { Timeline } from "@styled-icons/fluentui-system-regular/Timeline";
-import { FolderBriefcase } from "@styled-icons/fluentui-system-filled/FolderBriefcase";
-import { Badge } from "@styled-icons/material-outlined/Badge";
+import { Home } from "@styled-icons/heroicons-solid/Home/Home";
+import { Code } from "@styled-icons/fluentui-system-regular/Code/Code";
+import { Timeline } from "@styled-icons/fluentui-system-regular/Timeline/Timeline";
+import { FolderBriefcase } from "@styled-icons/fluentui-system-filled/FolderBriefcase/FolderBriefcase";
+import { Badge } from "@styled-icons/material-outlined/Badge/Badge";
 
 const NavigationBar = styled.div`
 	display: flex;

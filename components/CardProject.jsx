@@ -8,7 +8,7 @@ import { SettingsContext } from "@/context/SettingsContext";
 //Icons
 import { GithubOutline, ExternalLinkOutline } from "@styled-icons/evaicons-outline";
 import { NoPhotography } from "@styled-icons/material-outlined";
-import { TextboxMore } from "@styled-icons/fluentui-system-regular/TextboxMore";
+import { TextboxMore } from "@styled-icons/fluentui-system-regular/TextboxMore/TextboxMore";
 
 const Card = styled.div`
 	display: flex;
