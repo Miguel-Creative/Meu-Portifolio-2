@@ -13,7 +13,7 @@ import SocialNetworkRowStack from "@/components/SocialNetworkRowStack";
 import TitleSection from "@/components/TitleSection";
 
 //PDFs
-import curriculo from "../public/pdf/curriculo.pdf";
+// O currículo do template original não pertence ao novo proprietário.
 
 const WrapperAboutMe = styled.div`
 	display: flex;
@@ -151,7 +151,7 @@ const GithubStatsCard = styled.div`
 		height: 140px;
 		border-radius: 50%;
 		border: 5px solid ${(props) => props.theme.colors.branding};
-		background-color: ${(props) => props.theme.colors.branding};
+		background-color: ${(props) => props.theme.colors.backgroundPage};
 		position: absolute;
 		top: 30px;
 	}
@@ -270,21 +270,13 @@ export default function SobreMim(props) {
 
 	useEffect(() => {
 		async function fetchGithubStats() {
-			const response = await fetch("https://api.github.com/users/glaysonvisgueira");
+			const response = await fetch("https://api.github.com/users/Miguel-Creative");
 			const json = await response.json();
 			setGithubUserData(json);
 		}
 		fetchGithubStats();
 	}, []);
 
-	const handleDownload = () => {
-		const link = document.createElement("a");
-		link.href = curriculo;
-		link.download = "curriculo_glayson_visgueira.pdf"; // Nome do arquivo baixado
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-	};
 
 	return (
 		<SectionSobreMim id="section-sobre-mim">
@@ -295,12 +287,12 @@ export default function SobreMim(props) {
 							<GithubStatsCard>
 								<div className="background" />
 								<div className="img">
-									<Image src="/img/user-photo.jpg" alt={language.aboutMePage.alt_dev_img} layout="fill" objectFit="cover" className="image-rounded" />
+									<Image src="/img/israel-miguel.webp" alt="Retrato de Israel Miguel" layout="fill" objectFit="cover" className="image-rounded" />
 								</div>
 								<div className="content">
-									<h3>{githubUserData?.name}</h3>
-									<a href={githubUserData?.html_url} target="_blank" rel="noreferrer">
-										@{githubUserData?.login}
+									<h3>Israel Miguel</h3>
+									<a href="https://github.com/Miguel-Creative" target="_blank" rel="noreferrer">
+										@Miguel-Creative
 									</a>
 									<p>{language.aboutMePage.github_card.bio}</p>
 									<div className="github-stats">
@@ -330,9 +322,7 @@ export default function SobreMim(props) {
 							<p>{language.aboutMePage.paragraph_three}</p>
 							<div className="tech-and-cv">
 								<SocialNetworkRowStack />
-								<ButtonCV onClick={handleDownload} data-splitbee-event="Download CV">
-									Download CV
-								</ButtonCV>
+								{/* O botão CV será restaurado com o currículo de Israel Miguel. */}
 							</div>
 						</ScrollAnimation>
 					</div>
