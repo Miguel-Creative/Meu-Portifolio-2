@@ -36,6 +36,15 @@ A simulação com Wrangler 4.158.0 foi verificada em 06/11/2026: 88 arquivos rec
 
 ## Portfólio e animação
 
-O template original, com textos, mídia e navegação, permanece disponível. A lógica de construção por múltiplos cursores está em `lib/scrollConstruction.js`, montada por `components/ScrollConstruction.jsx` e estilizada em `styles/scrollConstruction.css`. A construção ocorre diretamente na página; rolar para baixo retoma, rolar para cima pausa, e os agentes acompanham o ponteiro quando o processo termina.
+O template original, com textos, mídia e navegação, permanece disponível. O motor Swarm adaptado está em `public/swarm-rebuild.js`, carregado por `components/ScrollConstruction.jsx`. Ele captura um blueprint da página e reconstrói caixas, textos, mídias e layouts no overlay em Shadow DOM enquanto a página real permanece por baixo. Rolar para baixo continua a construção; rolar para cima pausa as tarefas e os cursores seguem o ponteiro; ao concluir, o overlay desenhado se dissolve e a página React original volta a ser exibida, com o enxame ainda acompanhando o mouse. O mecanismo antigo foi removido.
 
 O template conserva referências ao autor original. A animação de cursores é uma interpretação independente da ideia de Swarm, de Joel Califa, e não é a extensão do Chrome.
+
+
+## Teste de regressão no navegador
+
+Após `npm run build`, execute `CHROME_PATH=/caminho/para/chrome node scripts/check-export.mjs` (Linux/macOS) ou configure a variável no Windows. O teste executa Chrome sem extensões, verifica captura completa da página, construção ao descer, pausa ao subir, retomada ao descer e restauração da página React. Para testar também a conclusão de todas as tarefas em uma varredura longa, defina `SWARM_FULL_TEST=1`.
+
+### Direitos autorais
+
+O arquivo `public/swarm-rebuild.js` adapta o motor do projeto Swarm Rebuild fornecido pelo proprietário do portfólio, que por sua vez credita Swarm de Joel Califa. O README da extensão afirma expressamente que partes originais dos mantenedores estão sob MIT, mas que trechos e movimentos derivados de Joel Califa **não estão automaticamente cobertos por essa licença**. Antes de distribuição/comercialização, confirme a autorização adequada. Créditos: https://github.com/califa/swarm-site e a página oficial Swarm Rebuild.
