@@ -75,10 +75,17 @@ try{
   });
   const ev=async expression=>(await send("Runtime.evaluate",{expression,returnByValue:true,awaitPromise:true})).result?.value;
   await send("Runtime.enable");
+  // Optional Android-size viewport; reload to capture the responsive layout.
+  if(process.env.SWARM_MOBILE_TEST === "1") {
+    await send("Page.enable");
+    await send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:3,mobile:true});
+    await send("Page.reload",{ignoreCache:true});
+  }
   const stats="(()=>{const app=window.__swarmRebuild?.app,eng=app?.engine,root=document.querySelector('swarm-rebuild');return{ready:!!eng?.ready,started:!!eng?.started,done:eng?.doneCount||0,total:eng?.tasks?.length||0,items:eng?.items?.length||0,paused:!!eng?.scrollPaused,flocking:!!eng?.flocking,frontier:eng?.frontier||0,y:scrollY,root:!!root,oldUI:!!document.querySelector('#swarm-construction-layer'),allSections:document.querySelectorAll('main').length,docHeight:document.documentElement.scrollHeight}})()";
   await poll(async()=>await ev("!!window.__swarmRebuild?.app?.engine?.ready"),130,220);
   await sleep(2400);
   report.initial=await ev(stats);
+  report.identity=await ev("(()=>{const a=window.__swarmRebuild.app;const photo=document.querySelector('img[alt=\\"Retrato de Israel Miguel\\"]');const imgBox=photo?.closest('.img');return {soundEnabled:a.sfx?.on||false,volume:a.sfx?.out?.gain?.value||0,speed:a.engine?.speed,hudDisplay:getComputedStyle(a.view.hud).display,photo:photo?.getAttribute('src')||null,portraitBackground:imgBox?getComputedStyle(imgBox).backgroundColor:null,siteBackground:getComputedStyle(document.querySelector('main')).backgroundColor,name:document.querySelector('header h3')?.textContent||'',screenWidth:innerWidth,screenHeight:innerHeight}})()");
   await ev("window.scrollTo(0,1200);true");
   await sleep(2300);
   report.down=await ev(stats);
@@ -128,6 +135,15 @@ try{
   console.log(JSON.stringify(report,null,2));
   if(!report.initial.ready||!report.initial.started||report.initial.total<100||report.initial.items<100)throw Error("Swarm did not capture the full template");
   if(report.initial.oldUI)throw Error("Old incomplete overlay is still active");
+  if(!report.identity.soundEnabled||Math.abs(report.identity.volume-0.35)>0.01||report.identity.speed!==1)
+    throw Error("Sound or default 1x configuration is wrong: "+JSON.stringify(report.identity));
+  if(report.identity.hudDisplay!=="none")throw Error("Swarm toolbar is still visible");
+  if(!report.identity.name.includes("Israel Miguel")||!report.identity.photo?.includes("israel-miguel.webp"))
+    throw Error("Israel Miguel branding/photo is missing");
+  if(report.identity.portraitBackground!==report.identity.siteBackground)
+    throw Error("Portrait background differs from current page theme");
+  if(process.env.SWARM_MOBILE_TEST==="1"&&report.identity.screenWidth>420)
+    throw Error("Mobile viewport emulation not applied");
   if(report.down.done<=report.initial.done||report.down.paused)throw Error("Downward reconstruction did not advance");
   if(!report.up.paused||report.upStable.done!==report.up.done)throw Error("Upward scroll did not pause tasks");
   if(report.resume.paused||report.resume.done<=report.upStable.done)throw Error("Resume did not advance tasks");
