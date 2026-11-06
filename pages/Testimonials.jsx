@@ -157,7 +157,7 @@ export default function Testimonials() {
 		<Section id="testimonials">
 			<TitleSection title={language.testimonialPage.title} subtitle={language.testimonialPage.subtitle} hasMarginBottom />
 
-			<Marquee autoFill gradient loop={0} direction="left" speed={60} gradientColor={theme.colors.backgroundPageRgb}>
+			<Marquee play={false} autoFill gradient loop={0} direction="left" speed={60} gradientColor={theme.colors.backgroundPageRgb}>
 				{[1, 2, 3, 4, 5, 6].map((testimonial, index) => (
 					<Testimonial key={index}>
 						<QuotesLeft className="quote-icon" />
