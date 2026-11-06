@@ -1,44 +1,30 @@
-# Portfólio original + construção progressiva por cursores
+# Deploy do portfólio original — Cloudflare Pages
 
-Este repositório mantém o template Next.js de Glayson Visgueira fornecido no arquivo "Meu Portifolio.zip", sem trocar sua Home, seu layout, sua navegação ou seus conteúdos. As informações pessoais, imagens de projetos, arquivos de currículo e links do template estão preservados para serem personalizados depois.
+O conteúdo do ZIP do portfólio Next.js de Glayson Visgueira está preservado. As informações, imagens, currículo, links e visual permanecem originais, para personalização posterior.
 
-## Interação
+A animação de construção pertence ao próprio site, em lib/scrollConstruction.js, com estilos em styles/scrollConstruction.css e montagem em components/ScrollConstruction.jsx. Não existe tela de entrada separada nem dependência de extensão do Chrome. A construção ocorre nos elementos originais; descer retoma, subir pausa e os cursores acompanham o ponteiro; após concluída, permanecem acompanhando o mouse. Pressionar Esc libera todas as tarefas. O sistema respeita preferência de movimento reduzido.
 
-A construção acontece dentro do DOM real do site, sem uma tela de entrada ou uma cópia que desaparece. O motor lib/scrollConstruction.js é uma implementação independente do efeito visual de cursores de ferramentas de design, adaptada para a rolagem:
+## Cloudflare Pages
 
-- Na entrada, os cursores começam a construir os elementos visíveis da Home.
-- Ao rolar para baixo, liberam as tarefas visíveis (caixas, textos, imagens, cartões) e as executam.
-- Ao rolar para cima, congelam o andamento e passam a acompanhar o mouse, sem apagar o que já foi concluído.
-- Ao descer novamente, retomam as tarefas ainda pendentes.
-- Depois da conclusão, os cursores permanecem flutuando em torno do ponteiro.
-- A camada de cursores não intercepta cliques. Links e botões revelados continuam reais.
-- Pressionar Esc conclui os elementos pendentes para não atrapalhar a navegação.
-- Respeita prefers-reduced-motion e usa menos cursores no celular.
+1. Cloudflare Dashboard → Workers & Pages → Create → Pages → Connect to Git.
+2. Escolha o repositório GitHub Miguel-Creative/Meu-Portifolio, branch main.
+3. Configuração:
+   - Framework preset: Next.js (Static HTML Export) ou None
+   - Build command: npm run build:cloudflare
+   - Build output directory: out
+   - Node.js version (environment variable): NODE_VERSION=22
+   - NPM_CONFIG_LEGACY_PEER_DEPS=true
+4. Salve e publique, depois abra a URL *.pages.dev. Não use o Worker antigo da Acme, pois ele não aponta para este repositório.
 
-O motor é original, sem importar scripts de uma extensão do Chrome. A experiência segue os princípios comportamentais do Swarm de Joel Califa e do Swarm Rebuild. Código de projetos de terceiros sem permissão de redistribuição não foi copiado.
+O arquivo .npmrc no repositório já inclui legacy-peer-deps=true para compatibilidade. O comando de build é Next.js 12: next build && next export. A configuração de imagens define loader akamai para permitir exportação estática, sem trocar as imagens do template.
 
-## Desenvolvimento local
+## Teste no Chrome sem extensão
 
-Recomenda-se Node.js 22.
+Após gerar o site com npm run build:cloudflare:
+node scripts/check-export.mjs
 
-1. Execute npm install (o arquivo .npmrc contém legacy-peer-deps=true para compatibilidade com as dependências antigas).
-2. Execute npm run dev; development em http://localhost:3000.
-3. Execute npm run build:cloudflare para exportar a pasta out/.
+O teste abre os arquivos estáticos em um servidor local, verifica as tarefas de construção, scroll descendente, pausa ascendente, retomada descendente e conclusão sem elementos ocultos. A execução requer Chrome ou Edge instalado no Windows.
 
-Teste automatizado com Chrome instalado no Windows: node scripts/check-scroll.mjs.
+## Crédito e licença
 
-## Cloudflare Pages (GitHub)
-
-Crie um projeto Pages, selecione este repositório e configure:
-
-- Branch: main
-- Framework: Next.js (Static HTML Export), ou escolha None com os mesmos parâmetros
-- Build command: npm run build:cloudflare
-- Build output directory: out
-- Variáveis de ambiente: NODE_VERSION=22 e NPM_CONFIG_LEGACY_PEER_DEPS=true
-
-A publicação no GitHub não cria automaticamente um novo site na Cloudflare. O primeiro deploy precisa apontar para esse repositório.
-
-## Créditos
-
-O conteúdo visual de origem foi disponibilizado em um ZIP do projeto glaysonvisgueira_next-js (README original preservado). Referência conceitual para os cursores: Swarm — Joel Califa (https://github.com/califa/swarm-site) e a extensão Swarm Rebuild. Esta integração reproduz comportamento, sem reutilizar a implementação de terceiros. rea-main.zip é a biblioteca de análise REA, não um componente do site, e não faz parte do deploy.
+O design original pertence a seus respectivos autores. O README original permanece neste repositório. A construção por cursores foi implementada especificamente para o site e é uma interpretação independente das interações vistas em Swarm, por Joel Califa (https://github.com/califa/swarm-site), e em Swarm Rebuild; não utiliza o código ou a extensão de terceiros. O arquivo rea-main.zip é uma ferramenta de engenharia reversa, não um componente necessário ao portfólio.
