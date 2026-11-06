@@ -85,14 +85,19 @@ try{
   await poll(async()=>await ev("!!window.__swarmRebuild?.app?.engine?.ready"),130,220);
   await sleep(2400);
   report.initial=await ev(stats);
-  report.identity=await ev("(()=>{const a=window.__swarmRebuild.app;const photo=document.querySelector('img[alt*=Israel]');const imgBox=photo?.closest('.img');return {soundEnabled:a.sfx?.on||false,volume:a.sfx?.out?.gain?.value||0,speed:a.engine?.speed,hudDisplay:getComputedStyle(a.view.hud).display,photo:photo?.getAttribute('src')||null,portraitBackground:imgBox?getComputedStyle(imgBox).backgroundColor:null,siteBackground:getComputedStyle(document.querySelector('main')).backgroundColor,name:document.querySelector('header h3')?.textContent||'',screenWidth:innerWidth,screenHeight:innerHeight}})()");
+  report.identity=await ev("(()=>{const a=window.__swarmRebuild.app;const photo=document.querySelector('img[alt*=Israel]');const imgBox=photo?.closest('.img');return {soundEnabled:a.sfx?.on||false,volume:a.sfx?.out?.gain?.value||0,speed:a.engine?.speed,hudDisplay:getComputedStyle(a.view.hud).display,photo:photo?.getAttribute('src')||null,portraitBackground:imgBox?getComputedStyle(imgBox).backgroundColor:null,siteBackground:getComputedStyle(document.querySelector('main')).backgroundColor,name:document.querySelector('header h3')?.textContent||'',mainName:document.querySelector('.type-string')?.textContent||'',screenWidth:innerWidth,screenHeight:innerHeight}})()");
   // No wheel, touch or scroll event here: prove the first screen builds on load.
   await sleep(2700);
   report.autostart=await ev(stats);
   if(report.initial.y!==0 || report.autostart.y!==0)
     throw Error("The startup test unexpectedly scrolled the page");
-  if(!report.initial.started || !report.autostart.started || report.autostart.done<=report.initial.done)
-    throw Error("The first viewport did not continue building automatically");
+  if(!report.initial.started || !report.autostart.started || report.autostart.done<report.initial.done)
+    throw Error("The first viewport did not build automatically");
+  await poll(async()=>await ev("window.__swarmRebuild.app.revealUntil>=innerHeight-3"),90,160);
+  report.reveal=await ev("(()=>{const a=window.__swarmRebuild.app;return {until:a.revealUntil,clip:a.view.bg.style.clipPath,cursorsClip:a.view.cursorsEl.style.clipPath,pending:a.engine.tasks.filter(t=>t.state!==\\"done\\"&&t.layer===\\"world\\"&&t.y<innerHeight).length,scrollY:scrollY,firstViewportBoost:a.engine.firstViewportBoost}})()");
+  if(report.reveal.scrollY!==0||report.reveal.pending!==0||report.reveal.firstViewportBoost||report.reveal.cursorsClip)
+    throw Error("First screen not fully revealed as native DOM while stationary: "+JSON.stringify(report.reveal));
+  if(!report.reveal.clip.startsWith("inset("))throw Error("No progressive reveal clip was applied");
   await ev("window.scrollTo(0,1200);true");
   await sleep(2300);
   report.down=await ev(stats);
@@ -142,10 +147,10 @@ try{
   console.log(JSON.stringify(report,null,2));
   if(!report.initial.ready||!report.initial.started||report.initial.total<100||report.initial.items<100)throw Error("Swarm did not capture the full template");
   if(report.initial.oldUI)throw Error("Old incomplete overlay is still active");
-  if(!report.identity.soundEnabled||Math.abs(report.identity.volume-0.35)>0.01||report.identity.speed!==1)
+  if(!report.identity.soundEnabled||Math.abs(report.identity.volume-0.52)>0.01||report.identity.speed!==1)
     throw Error("Sound or default 1x configuration is wrong: "+JSON.stringify(report.identity));
   if(report.identity.hudDisplay!=="none")throw Error("Swarm toolbar is still visible");
-  if(!report.identity.name.includes("Israel Miguel")||!report.identity.photo?.includes("israel-miguel.webp"))
+  if(!report.identity.name.includes("IM")||!report.identity.mainName.includes("Israel Miguel")||!report.identity.photo?.includes("israel-miguel.webp"))
     throw Error("Israel Miguel branding/photo is missing");
   if(report.identity.portraitBackground!==report.identity.siteBackground)
     throw Error("Portrait background differs from current page theme");
