@@ -85,7 +85,7 @@ try{
   await poll(async()=>await ev("!!window.__swarmRebuild?.app?.engine?.ready"),130,220);
   await sleep(2400);
   report.initial=await ev(stats);
-  report.identity=await ev("(()=>{const a=window.__swarmRebuild.app;const photo=document.querySelector('img[alt=\\"Retrato de Israel Miguel\\"]');const imgBox=photo?.closest('.img');return {soundEnabled:a.sfx?.on||false,volume:a.sfx?.out?.gain?.value||0,speed:a.engine?.speed,hudDisplay:getComputedStyle(a.view.hud).display,photo:photo?.getAttribute('src')||null,portraitBackground:imgBox?getComputedStyle(imgBox).backgroundColor:null,siteBackground:getComputedStyle(document.querySelector('main')).backgroundColor,name:document.querySelector('header h3')?.textContent||'',screenWidth:innerWidth,screenHeight:innerHeight}})()");
+  report.identity=await ev("(()=>{const a=window.__swarmRebuild.app;const photo=document.querySelector('img[alt*=Israel]');const imgBox=photo?.closest('.img');return {soundEnabled:a.sfx?.on||false,volume:a.sfx?.out?.gain?.value||0,speed:a.engine?.speed,hudDisplay:getComputedStyle(a.view.hud).display,photo:photo?.getAttribute('src')||null,portraitBackground:imgBox?getComputedStyle(imgBox).backgroundColor:null,siteBackground:getComputedStyle(document.querySelector('main')).backgroundColor,name:document.querySelector('header h3')?.textContent||'',screenWidth:innerWidth,screenHeight:innerHeight}})()");
   await ev("window.scrollTo(0,1200);true");
   await sleep(2300);
   report.down=await ev(stats);
