@@ -3081,7 +3081,7 @@
   const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
   // Sound is enabled by default; browsers may need a first touch to unlock it.
   let soundPref = true;
-  const DEFAULT_SOUND_VOLUME = 0.35;
+  const DEFAULT_SOUND_VOLUME = 0.52;
   const SPK_ICON = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.5l3.5 3V3L5 6z" fill="currentColor"/>';
 
   class Sound {
