@@ -3528,7 +3528,10 @@
       // No automatic sound or opening sting.
       this.view.bg.classList.add("on");
       // No standalone introduction overlay.
-      this.view.hud.classList.add("on");
+      // Never show the extension toolbar on any viewport (desktop or mobile).
+      this.view.hud.classList.remove("on");
+      this.view.hud.style.setProperty("display", "none", "important");
+      this.view.hud.setAttribute("aria-hidden", "true");
       const mark = (k) => (this.timing[k] = Math.round(performance.now() - this.t0));
       await sleep(40);
       await unhidePage();
@@ -3559,11 +3562,15 @@
       this.view.mount(model);
       this.engine.setModel(model);
       this.engine.scrollPaused = false;
+      // Open the first viewport immediately; deeper regions remain scroll-gated.
+      const initial = this.view.vp;
+      this.engine.frontier = Math.max(this.engine.frontier, initial.sy + initial.vh);
       this.model = model;
       mark("mount");
       const wait = 0;
       if (wait > 0) await sleep(wait);
       if (this.dead) return;
+      // Begin constructing the visible top-of-page now, without wheel or touch input.
       this.engine.start();
     }
 
@@ -3577,11 +3584,12 @@
       for (let i = 1; i <= steps && !this.dead; i++) {
         env.scrollTo(Math.min(H, (H / steps) * i));
         await nextFrame();
-        await sleep(30);
+        // One animation frame is enough to trigger lazy-load observers.
+        // Avoid an additional 30 ms for each scan step before the first elements are drawn.
       }
       env.scrollTo(g.sy, g.sx);
       await nextFrame();
-      await sleep(100);
+      // Do not delay the first-viewport build after restoring scroll position.
       env.scrollTo(g.sy, g.sx);
       this.view.frozen = null;
     }
@@ -3602,7 +3610,7 @@
       }, { passive: true });
       on(window, "resize", () => this.view.measure());
       on(window, "wheel", (e) => {
-        if (this.engine.ready) this.engine.start();
+        // The engine has already started on page load; wheel only controls direction.
         if (this.engine.started && !this.engine.flocking && Math.abs(e.deltaY) > 1) this.engine.scrollPaused = e.deltaY < 0;
       }, { passive: true });
       on(window, "pointermove", (e) => {
