@@ -9,7 +9,7 @@
 	},
 	"landingPage": {
 		"apresentationText": "Hello, I'm",
-		"firstTypeText": "Glayson Visgueira",
+		"firstTypeText": "Israel Miguel",
 		"resumeText": "Fullstack developer with expertise in creating complete solutions, always focused on delivering innovative and intuitive frontend experiences that connect the user to the product",
 		"buttonText": "Learn more"
 	},
@@ -62,7 +62,7 @@
 			"following": "Following",
 			"repos": "Repos"
 		},
-		"alt_dev_img": "Glayson Visgueira Developer",
+		"alt_dev_img": "Israel Miguel Developer",
 		"stats": {
 			"stat_1": "5+ years of experience in the technology market",
 			"stat_2": "More than 15 successful projects delivered",
