@@ -90,6 +90,25 @@ try{
   await ev("window.scrollTo(0,2500);true");
   await sleep(2600);
   report.resume=await ev(stats);
+  if(process.env.SWARM_FULL_TEST === "1") {
+    await ev("window.__swarmRebuild.app.engine.speed=3;true");
+    const totalHeight=await ev("document.documentElement.scrollHeight");
+    for(let y=3200;y<totalHeight;y+=650) {
+      await ev("window.scrollTo(0,"+y+");true");
+      await sleep(420);
+    }
+    await ev("window.scrollTo(0,document.documentElement.scrollHeight);true");
+    const checkpoints=[];
+    for(let i=0;i<50;i++) {
+      await sleep(800);
+      const state=await ev(stats);
+      if(i%5===0||state.flocking)checkpoints.push({done:state.done,total:state.total,flocking:state.flocking});
+      if(state.flocking)break;
+    }
+    report.full={final:await ev(stats),checkpoints};
+    if(report.full.final.done!==report.full.final.total||!report.full.final.flocking)
+      throw Error("Complete-page reconstruction did not finish: "+JSON.stringify(report.full));
+  }
   // Exercise the original-page handoff path without falsely claiming that
   // hundreds of genuine construction tasks have all finished.
   report.handoff=await ev("(()=>{const a=window.__swarmRebuild.app;a.onComplete();return{originalVisible:a.view.bg.style.opacity==='0',worldHidden:a.view.world.style.opacity==='0',cursorCount:a.engine.cursors.length,hostPassive:a.view.host.style.pointerEvents==='none'}})()");
