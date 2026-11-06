@@ -1,30 +1,41 @@
-# Deploy do portfólio original — Cloudflare Pages
+# Publicação do portfólio original no Cloudflare Workers
 
-O conteúdo do ZIP do portfólio Next.js de Glayson Visgueira está preservado. As informações, imagens, currículo, links e visual permanecem originais, para personalização posterior.
+Este repositório mantém o portfólio Next.js 12 original e sua animação integrada aos elementos da página. Não é preciso atualizar o Next.js nem usar extensão do Chrome para publicar a versão estática.
 
-A animação de construção pertence ao próprio site, em lib/scrollConstruction.js, com estilos em styles/scrollConstruction.css e montagem em components/ScrollConstruction.jsx. Não existe tela de entrada separada nem dependência de extensão do Chrome. A construção ocorre nos elementos originais; descer retoma, subir pausa e os cursores acompanham o ponteiro; após concluída, permanecem acompanhando o mouse. Pressionar Esc libera todas as tarefas. O sistema respeita preferência de movimento reduzido.
+## Configuração atual (Cloudflare Workers Builds)
 
-## Cloudflare Pages
+O Worker conectado ao GitHub usa:
 
-1. Cloudflare Dashboard → Workers & Pages → Create → Pages → Connect to Git.
-2. Escolha o repositório GitHub Miguel-Creative/Meu-Portifolio, branch main.
-3. Configuração:
-   - Framework preset: Next.js (Static HTML Export) ou None
-   - Build command: npm run build:cloudflare
-   - Build output directory: out
-   - Node.js version (environment variable): NODE_VERSION=22
-   - NPM_CONFIG_LEGACY_PEER_DEPS=true
-4. Salve e publique, depois abra a URL *.pages.dev. Não use o Worker antigo da Acme, pois ele não aponta para este repositório.
+- **Worker name:** `meu-portifolio` (deve corresponder ao nome no painel da Cloudflare)
+- **Git:** `Miguel-Creative/Meu-Portifolio`, branch `main`
+- **Root directory:** `/`
+- **Build command:** `npm run build`
+- **Deploy command:** `npx wrangler deploy`
+- **Output:** `out/`, configurado no `wrangler.toml`
+- **Node.js:** `22`, fixado em `.node-version`
 
-O arquivo .npmrc no repositório já inclui legacy-peer-deps=true para compatibilidade. O comando de build é Next.js 12: next build && next export. A configuração de imagens define loader akamai para permitir exportação estática, sem trocar as imagens do template.
+O comando `npm run build` executa `next build && next export` e gera HTML/CSS/JS estáticos. O Wrangler encontra o `wrangler.toml`, reconhece `[assets] directory = "./out"` e publica os arquivos no Worker, sem tentar configurar um runtime de Next.js.
 
-## Teste no Chrome sem extensão
+Se o painel ainda mostrar **Framework: Next.js** ou **Output: .next** como valores detectados anteriormente, isso não altera a configuração de assets do arquivo `wrangler.toml`. O importante é que o build gere `out/` e que a publicação execute `npx wrangler deploy` na raiz do repositório.
 
-Após gerar o site com npm run build:cloudflare:
-node scripts/check-export.mjs
+## Como conferir
 
-O teste abre os arquivos estáticos em um servidor local, verifica as tarefas de construção, scroll descendente, pausa ascendente, retomada descendente e conclusão sem elementos ocultos. A execução requer Chrome ou Edge instalado no Windows.
+No Cloudflare Dashboard, abra **Workers & Pages → meu-portifolio → Deployments/Builds** e procure um build da branch `main` com o commit mais recente. O resultado esperado contém a execução de `next export`, o reconhecimento dos arquivos em `out/` pelo Wrangler e a confirmação de implantação.
 
-## Crédito e licença
+Caso o log ainda diga que **Next.js 12 não pode ser configurado automaticamente**, confirme que o build realmente clonou o commit com o `wrangler.toml` na raiz; esse erro acontece quando o Wrangler executa a configuração automática sem encontrar um arquivo de configuração válido.
 
-O design original pertence a seus respectivos autores. O README original permanece neste repositório. A construção por cursores foi implementada especificamente para o site e é uma interpretação independente das interações vistas em Swarm, por Joel Califa (https://github.com/califa/swarm-site), e em Swarm Rebuild; não utiliza o código ou a extensão de terceiros. O arquivo rea-main.zip é uma ferramenta de engenharia reversa, não um componente necessário ao portfólio.
+É possível testar antes de publicar com:
+
+```sh
+npm ci
+npm run build
+npx wrangler deploy --dry-run
+```
+
+A simulação com Wrangler 4.158.0 foi verificada em 06/11/2026: 88 arquivos reconhecidos no diretório `out`, sem erro de configuração. A simulação não é confirmação de publicação na conta Cloudflare.
+
+## Portfólio e animação
+
+O template original, com textos, mídia e navegação, permanece disponível. A lógica de construção por múltiplos cursores está em `lib/scrollConstruction.js`, montada por `components/ScrollConstruction.jsx` e estilizada em `styles/scrollConstruction.css`. A construção ocorre diretamente na página; rolar para baixo retoma, rolar para cima pausa, e os agentes acompanham o ponteiro quando o processo termina.
+
+O template conserva referências ao autor original. A animação de cursores é uma interpretação independente da ideia de Swarm, de Joel Califa, e não é a extensão do Chrome.
