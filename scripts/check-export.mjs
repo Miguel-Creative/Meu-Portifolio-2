@@ -86,6 +86,13 @@ try{
   await sleep(2400);
   report.initial=await ev(stats);
   report.identity=await ev("(()=>{const a=window.__swarmRebuild.app;const photo=document.querySelector('img[alt*=Israel]');const imgBox=photo?.closest('.img');return {soundEnabled:a.sfx?.on||false,volume:a.sfx?.out?.gain?.value||0,speed:a.engine?.speed,hudDisplay:getComputedStyle(a.view.hud).display,photo:photo?.getAttribute('src')||null,portraitBackground:imgBox?getComputedStyle(imgBox).backgroundColor:null,siteBackground:getComputedStyle(document.querySelector('main')).backgroundColor,name:document.querySelector('header h3')?.textContent||'',screenWidth:innerWidth,screenHeight:innerHeight}})()");
+  // No wheel, touch or scroll event here: prove the first screen builds on load.
+  await sleep(2700);
+  report.autostart=await ev(stats);
+  if(report.initial.y!==0 || report.autostart.y!==0)
+    throw Error("The startup test unexpectedly scrolled the page");
+  if(!report.initial.started || !report.autostart.started || report.autostart.done<=report.initial.done)
+    throw Error("The first viewport did not continue building automatically");
   await ev("window.scrollTo(0,1200);true");
   await sleep(2300);
   report.down=await ev(stats);
