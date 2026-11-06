@@ -1,0 +1,16 @@
+REFATORAR:
+Footer
+Adicionar sessão de testemunhos
+
+REALIZADO:
+alterar os subtitles das paginas
+Adicionar novo projeto aos cards (TDAH CLASS)
+home com novo estilo
+alterar versao
+clicar no card abre o modal
+comentar o que clientes falam
+abrir o modal ainda deixa o usuario rolar o scroll da pagina
+faq accordion
+trocar o arquivo do currículo para um atualizado
+ir para sessao sobre mim pelo link esta cobrindo title
+transformar o botao de download de link para bottao de download do curriculo
