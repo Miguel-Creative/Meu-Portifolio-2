@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
-import ScrollAnimation from "react-animate-on-scroll";
+import ScrollAnimation from "./StaticReveal";
 
 //Styled icons
 import { Robot } from "@styled-icons/fa-solid/Robot/Robot";
