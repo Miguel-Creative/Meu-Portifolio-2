@@ -20,7 +20,7 @@ import { FluidContainer } from "@/styles/ui";
 import { SettingsContext } from "@/context/SettingsContext";
 
 //Arquivo curriculo
-import curriculo from "../public/pdf/curriculo.pdf";
+// Currículo removido até a disponibilização do documento de Israel Miguel.
 
 const LandingPageContainer = styled.div`
 	display: flex;
@@ -237,14 +237,6 @@ export default function HomePage() {
 	const theme = useTheme();
 	const { language } = useContext(SettingsContext);
 
-	const handleDownload = () => {
-		const link = document.createElement("a");
-		link.href = curriculo;
-		link.download = "curriculo_glayson_visgueira.pdf";
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-	};
 
 	return (
 		<FluidContainer id="section-home" hasMinHeight>
@@ -253,8 +245,8 @@ export default function HomePage() {
 				<ProgressBar color={theme.colors.branding} height={5} />
 				<Head
 					title="Portfólio de projetos de programação"
-					metaDescription="Web portifólio de projetos de programação do Dev Glayson Visgueira."
-					keywords="Glayson Visgueira, Glayson, Visgueira, Programação, Portifólio, Dev, Programador, Developer, Desenvolvedor de software, analista de sistemas, programador fullstack, desenvolvedor frontend"
+					metaDescription="Portfólio de desenvolvimento de software de Israel Miguel."
+					keywords="Israel Miguel, Programação, Portfólio, Dev, Desenvolvedor de software, Fullstack, Frontend"
 				/>
 				<LandingPageContainer>
 					<TitleLandingContainer>
@@ -276,9 +268,7 @@ export default function HomePage() {
 							<Link href="#section-sobre-mim" passHref>
 								<ButtonSaibaMais>{language.landingPage.buttonText}</ButtonSaibaMais>
 							</Link>
-							<ButtonDownloadCV onClick={handleDownload} target="_blank" data-splitbee-event="Download CV">
-								Download CV
-							</ButtonDownloadCV>
+							{/* Disponibilizaremos o currículo assim que Israel Miguel o fornecer. */}
 						</WrapperButtons>
 					</TitleLandingContainer>
 					<ContainerAnimation>
