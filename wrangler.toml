@@ -1,0 +1,8 @@
+# Deploy the unchanged Next.js 12 portfolio as pre-rendered static assets.
+# The Cloudflare Worker serves generated HTML/CSS/JS; no Next.js server runtime.
+name = "meu-portifolio"
+compatibility_date = "2026-11-06"
+
+[assets]
+directory = "./out"
+html_handling = "auto-trailing-slash"
