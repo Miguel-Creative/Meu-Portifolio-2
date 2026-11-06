@@ -2124,6 +2124,8 @@
       this.retired = 0;
       this.doneCount = 0;
       this.waitCount = 0;
+      // Nominal speed stays at 1x; only the first screen gets extra build tempo.
+      this.firstViewportBoost = false;
       const vp = this.vp;
       for (let n = 0; n < INTRO_AGENTS; n++) {
         const side = n % 2 === 0;
@@ -2305,7 +2307,7 @@
       this.vel = Math.max(this.vel * Math.exp(-dt * 1.2), this.vel * 0.7 + sv * 0.3);
       if (this.started) this.frontier = Math.max(this.frontier, this.viewBot);
       const avail = this.started ? this.available() : [];
-      this.tempo = clamp(2.1 + this.vel / 900 + (avail.length / Math.max(1, this.cursors.length)) * 0.5, 2.1, 4.5) * this.speed;
+      this.tempo = clamp(2.1 + this.vel / 900 + (avail.length / Math.max(1, this.cursors.length)) * 0.5, 2.1, 4.5) * this.speed * (this.firstViewportBoost ? 1.65 : 1);
 
       if (this.rulers.want > 0) this.rulers.lastNeed = this.time;
       const rt = this.time - this.rulers.lastNeed < 0.7 ? 1 : 0;
@@ -3490,6 +3492,10 @@
       this.speedIx = 0;
       this.complete = false;
       this.timing = {};
+      // A native-page reveal boundary follows finished portions of the blueprint.
+      this.revealUntil = 0;
+      this.firstViewportEnd = 0;
+      this.lastReveal = -1;
     }
 
     async loadShot() {
@@ -3562,9 +3568,12 @@
       this.view.mount(model);
       this.engine.setModel(model);
       this.engine.scrollPaused = false;
-      // Open the first viewport immediately; deeper regions remain scroll-gated.
+      // Build and prioritize the entire opening viewport before deeper sections.
       const initial = this.view.vp;
-      this.engine.frontier = Math.max(this.engine.frontier, initial.sy + initial.vh);
+      this.firstViewportEnd = initial.sy + initial.vh;
+      this.revealUntil = initial.sy;
+      this.engine.firstViewportBoost = true;
+      this.engine.frontier = Math.max(this.engine.frontier, this.firstViewportEnd);
       this.model = model;
       mark("mount");
       const wait = 0;
@@ -3684,6 +3693,30 @@
       b.title = key === "off" ? "Sound off (M)" : "Sound on (M)";
     }
 
+    // Reveal the actual React DOM as each region finishes. Only the incomplete
+    // area stays covered by the Swarm drawing layers; cursors are never clipped.
+    updateNativeReveal() {
+      const E = this.engine;
+      if (!E || !E.started || !E.ready || this.complete || !E.tasks.length) return;
+      const vp = E.vp;
+      let firstPendingY = Math.min(E.frontier, E.viewBot);
+      for (const t of E.tasks) {
+        if (t.state === "done") continue;
+        const y = t.layer === "world" ? t.y : vp.sy;
+        if (Number.isFinite(y) && y < firstPendingY) firstPendingY = y;
+      }
+      this.revealUntil = Math.max(this.revealUntil, Math.max(0, firstPendingY - 2));
+      if (this.revealUntil >= this.firstViewportEnd - 3) E.firstViewportBoost = false;
+      const revealedPx = Math.max(0, Math.min(vp.vh, this.revealUntil - vp.sy));
+      const next = Math.round(revealedPx);
+      if (next === this.lastReveal) return;
+      this.lastReveal = next;
+      const clip = "inset(" + next + "px 0px 0px 0px)";
+      for (const el of [this.view.bg, this.view.under, this.view.port, this.view.over, this.view.ov, this.view.badges, this.view.rulers]) {
+        if (el) el.style.clipPath = clip;
+      }
+    }
+
     frame(now) {
       if (this.dead) return;
       const dt = Math.min(0.05, (now - this.last) / 1000);
@@ -3692,6 +3725,7 @@
         this.engine.step(dt);
         if (this.tour) this.tourStep(dt);
         this.view.render(this.engine);
+        this.updateNativeReveal();
         if (!this._hudT || now - this._hudT > 200) {
           this._hudT = now;
           this.updateHud();
