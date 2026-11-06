@@ -94,7 +94,7 @@ try{
   if(!report.initial.started || !report.autostart.started || report.autostart.done<report.initial.done)
     throw Error("The first viewport did not build automatically");
   await poll(async()=>await ev("window.__swarmRebuild.app.revealUntil>=innerHeight-3"),90,160);
-  report.reveal=await ev("(()=>{const a=window.__swarmRebuild.app;return {until:a.revealUntil,clip:a.view.bg.style.clipPath,cursorsClip:a.view.cursorsEl.style.clipPath,pending:a.engine.tasks.filter(t=>t.state!==\\"done\\"&&t.layer===\\"world\\"&&t.y<innerHeight).length,scrollY:scrollY,firstViewportBoost:a.engine.firstViewportBoost}})()");
+  report.reveal=await ev("(()=>{const a=window.__swarmRebuild.app;return {until:a.revealUntil,clip:a.view.bg.style.clipPath,cursorsClip:a.view.cursorsEl.style.clipPath,pending:a.engine.tasks.filter(t=>t.state!=='done'&&t.layer==='world'&&t.y<innerHeight).length,scrollY:scrollY,firstViewportBoost:a.engine.firstViewportBoost}})()");
   if(report.reveal.scrollY!==0||report.reveal.pending!==0||report.reveal.firstViewportBoost||report.reveal.cursorsClip)
     throw Error("First screen not fully revealed as native DOM while stationary: "+JSON.stringify(report.reveal));
   if(!report.reveal.clip.startsWith("inset("))throw Error("No progressive reveal clip was applied");
