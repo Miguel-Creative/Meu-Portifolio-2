@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import ScrollAnimation from "react-animate-on-scroll";
+import ScrollAnimation from "../components/StaticReveal";
 
 //Contexto
 import { SettingsContext } from "@/context/SettingsContext";
