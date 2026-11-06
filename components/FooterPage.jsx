@@ -285,7 +285,7 @@ export default function FooterPage(props) {
 
 	useEffect(() => {
 		const fetchVersion = async () => {
-			const response = await fetch("https://api.github.com/repos/Glaysonvisgueira/glaysonvisgueira_next-js/contents/package.json");
+			const response = await fetch("https://api.github.com/repos/Miguel-Creative/Meu-Portifolio/contents/package.json");
 			const data = await response.json();
 			const packageJson = JSON.parse(Buffer.from(data.content, "base64").toString("utf-8")); // Decodifica o conteúdo base64
 			setVersion(packageJson.version);
@@ -305,7 +305,7 @@ export default function FooterPage(props) {
 		<FooterContainer>
 			<div id="grid">
 				<BrandFooterWrapper>
-					<FooterBrandTextTitle>GLAYSON VISGUEIRA</FooterBrandTextTitle>
+					<FooterBrandTextTitle>Israel Miguel</FooterBrandTextTitle>
 					<span>{language.landingPage.resumeText}</span>
 					<SocialNetworkRowStack />
 				</BrandFooterWrapper>
@@ -334,7 +334,7 @@ export default function FooterPage(props) {
 				<ScrollAnimation animateIn="fadeIn" animateOnce delay={400}>
 					<SectionFooterMenu>
 						<FooterTextTitle>{language.footer.labelSourceCode.title}</FooterTextTitle>
-						<FooterTextExternalLink href="https://github.com/Glaysonvisgueira/glaysonvisgueira_next-js" target="_blank">
+						<FooterTextExternalLink href="https://github.com/Miguel-Creative/Meu-Portifolio" target="_blank">
 							Github
 						</FooterTextExternalLink>
 					</SectionFooterMenu>
@@ -375,7 +375,7 @@ export default function FooterPage(props) {
 			<ContainerBuildCopyright>
 				{/* <SocialNetworkRowStack /> */}
 
-				<span>© {new Date().getFullYear()} Glayson Visgueira. Todos os direitos reservados.</span>
+				<span>© {new Date().getFullYear()} Israel Miguel. Todos os direitos reservados.</span>
 				<div className="build-and-button-top">
 					<TextBuildProject>
 						{language.footer.labelBuildVersion}: {version || ""}
