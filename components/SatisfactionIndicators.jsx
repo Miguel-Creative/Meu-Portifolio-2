@@ -1,7 +1,7 @@
 "use client";
 import React, { useContext } from "react";
 import styled from "styled-components";
-import ScrollAnimation from "react-animate-on-scroll";
+import ScrollAnimation from "./StaticReveal";
 import { useTheme } from "styled-components";
 
 //Context
