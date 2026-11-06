@@ -89,7 +89,7 @@ export default function CarrouselTechs(props) {
 	const { direction, colorIcon, speed } = props;
 
 	return (
-		<Marquee autoFill gradient loop={0} gradientColor={theme.colors.backgroundPageRgb} direction={direction} speed={speed}>
+		<Marquee play={false} autoFill gradient loop={0} gradientColor={theme.colors.backgroundPageRgb} direction={direction} speed={speed}>
 			<Carrousel colorIcon={colorIcon}>
 				<div className="slide">
 					<Adobephotoshop />
