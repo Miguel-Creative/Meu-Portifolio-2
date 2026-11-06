@@ -67,7 +67,8 @@ const LogoContainer = styled.div`
 const LogoText = styled.h3`
 	color: ${(props) => props.theme.colors.title};
 	font-weight: 700;
-	font-size: 30px;
+	font-size: clamp(18px, 2.1vw, 30px);
+	white-space: nowrap;
 
 	@media (max-width: 900px) {
 		font-size: ${(props) => props.theme.fontSizes.xl};
@@ -166,7 +167,7 @@ export default function LayoutTemplate({ children }) {
 					<Link href="#section-home" passHref>
 						<LogoContainer>
 							<LogoText>
-								<CaracteresLogo>&lt;</CaracteresLogo>GV <CaracteresLogo>/&gt;</CaracteresLogo>
+								Israel Miguel
 							</LogoText>
 						</LogoContainer>
 					</Link>
