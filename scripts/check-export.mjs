@@ -106,6 +106,18 @@ try{
       if(state.flocking)break;
     }
     report.full={final:await ev(stats),checkpoints};
+    report.full.autoHandoff=await ev("(()=>{const a=window.__swarmRebuild.app;return{bg:a.view.bg.style.opacity,world:a.view.world.style.opacity,passive:a.view.host.style.pointerEvents}})()");
+    if(report.full.autoHandoff.bg!=="0"||report.full.autoHandoff.world!=="0"||!report.full.autoHandoff.passive)
+      throw Error("Automatic completion did not reveal the original site");
+    const centroid=()=>ev("(()=>{const cs=window.__swarmRebuild.app.engine.cursors;return cs.reduce((s,c)=>s+c.x,0)/Math.max(1,cs.length)})()");
+    await ev("window.dispatchEvent(new PointerEvent('pointermove',{clientX:80,clientY:90,bubbles:true}));true");
+    await sleep(1100);
+    const left=await centroid();
+    await ev("window.dispatchEvent(new PointerEvent('pointermove',{clientX:1320,clientY:740,bubbles:true}));true");
+    await sleep(1600);
+    const right=await centroid();
+    report.full.mouseFollow={left,right,delta:right-left};
+    if(right-left<140)throw Error("Completed cursors did not follow the mouse");
     if(report.full.final.done!==report.full.final.total||!report.full.final.flocking)
       throw Error("Complete-page reconstruction did not finish: "+JSON.stringify(report.full));
   }
