@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import ScrollAnimation from "react-animate-on-scroll";
+import ScrollAnimation from "./StaticReveal";
 
 import { BodyText } from "@/styles/ui";
 
