@@ -2344,8 +2344,20 @@
         return;
       }
       if (this.started && this.scrollPaused) {
+        // Pause task generators, but let every cursor orbit the real mouse.
+        // Drawing tools turn back into arrows while the user scrolls upward.
+        for (const c of this.cursors) {
+          if (c._returnShape === undefined) c._returnShape = c.shape;
+          c.shape = "arrow";
+        }
         this.follow(dt, this.cursors);
         return;
+      }
+      for (const c of this.cursors) {
+        if (c._returnShape !== undefined) {
+          c.shape = c._returnShape;
+          delete c._returnShape;
+        }
       }
       if (!this.started) {
         const center = this.fromViewport(vp.ox + vp.vw / 2, vp.oy + vp.vh / 2);
