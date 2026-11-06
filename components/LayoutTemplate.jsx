@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 //Third part librarys
 import Link from "next/link";
 import styled from "styled-components";
-import Fade from "react-reveal/Fade";
+import Fade from "./StaticReveal";
 
 //Custom components
 import SwitchThemeButton from "@/components/SwitchThemeButton";
