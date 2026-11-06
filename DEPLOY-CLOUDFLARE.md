@@ -38,7 +38,7 @@ A simulação com Wrangler 4.158.0 foi verificada em 06/11/2026: 88 arquivos rec
 
 O template original, com textos, mídia e navegação, permanece disponível. O motor Swarm adaptado está em `public/swarm-rebuild.js`, carregado por `components/ScrollConstruction.jsx`. Ele captura um blueprint da página e reconstrói caixas, textos, mídias e layouts no overlay em Shadow DOM enquanto a página real permanece por baixo. Rolar para baixo continua a construção; rolar para cima pausa as tarefas e os cursores seguem o ponteiro; ao concluir, o overlay desenhado se dissolve e a página React original volta a ser exibida, com o enxame ainda acompanhando o mouse. O mecanismo antigo foi removido.
 
-O template conserva referências ao autor original. A animação de cursores é uma interpretação independente da ideia de Swarm, de Joel Califa, e não é a extensão do Chrome.
+O template conserva referências ao seu autor original. O novo motor é uma adaptação standalone do código da extensão Swarm Rebuild enviado para análise, com mudanças de ciclo de vida e sincronização à rolagem; não requer instalar a extensão do Chrome. Veja a seção de direitos autorais abaixo.
 
 
 ## Teste de regressão no navegador
