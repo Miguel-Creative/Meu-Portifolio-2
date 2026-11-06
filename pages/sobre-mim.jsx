@@ -6,7 +6,7 @@ import { SettingsContext } from "@/context/SettingsContext";
 //Third's librarys
 import styled from "styled-components";
 import Image from "next/image";
-import ScrollAnimation from "react-animate-on-scroll";
+import ScrollAnimation from "../components/StaticReveal";
 
 //Custom components
 import SocialNetworkRowStack from "@/components/SocialNetworkRowStack";
