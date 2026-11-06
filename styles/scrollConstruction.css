@@ -95,3 +95,7 @@
   #swarm-construction-layer{display:none!important}
   [data-swarm-content],[data-swarm-box]{visibility:visible!important;opacity:1!important;clip-path:none!important}
 }
+/* Text tasks get their own I-beam tool; geometry retains crosshair selection. */
+.swarm-cursor .swarm-ibeam{position:absolute;left:-4px;top:-3px;opacity:0;transition:opacity .12s ease;overflow:visible}
+.swarm-cursor.is-typing .swarm-ibeam{opacity:1}
+.swarm-cursor.is-typing .swarm-arrow,.swarm-cursor.is-typing .swarm-cross{opacity:0}
