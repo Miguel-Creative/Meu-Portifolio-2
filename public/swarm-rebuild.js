@@ -1523,7 +1523,7 @@
 .intro.gone{opacity:0;transform:translate(-50%,-50%) scale(.9)}
 .intro img{display:block;width:60px;height:60px;object-fit:contain;filter:grayscale(1);opacity:.42;border-radius:14px}
 .intro .mono{width:60px;height:60px;border-radius:16px;background:#D7DADE;color:#fff;font:700 30px/60px Inter,system-ui,sans-serif;text-align:center}
-.hud{position:absolute;left:50%;bottom:20px;transform:translate(-50%,18px);opacity:0;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 10px;background:rgba(30,30,30,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.07);font:500 12px/1 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;pointer-events:auto;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);white-space:nowrap;user-select:none;z-index:5}
+.hud{display:none !important;pointer-events:none !important;position:absolute;left:50%;bottom:20px;transform:translate(-50%,18px);opacity:0;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 10px;background:rgba(30,30,30,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.07);font:500 12px/1 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;pointer-events:auto;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);white-space:nowrap;user-select:none;z-index:5}
 .hud.on{opacity:1;transform:translate(-50%,0)}
 .hud .dots{display:flex;padding-left:5px}
 .hud .dots i{display:block;width:18px;height:18px;margin-left:-5px;border-radius:50%;border:2px solid #1e1e1e;font:700 9px/14px Inter,system-ui,sans-serif;font-style:normal;text-align:center;color:#fff;transition:background .3s}
@@ -3079,7 +3079,9 @@
   const PENTA = [0, 2, 4, 7, 9]; // E F# G# B C#
   const E2 = 40;
   const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
-  let soundPref = false;
+  // Sound is enabled by default; browsers may need a first touch to unlock it.
+  let soundPref = true;
+  const DEFAULT_SOUND_VOLUME = 0.35;
   const SPK_ICON = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.5l3.5 3V3L5 6z" fill="currentColor"/>';
 
   class Sound {
@@ -3105,7 +3107,7 @@
       }
       const ctx = this.ctx;
       const out = ctx.createGain();
-      out.gain.value = this.on ? 1 : 0;
+      out.gain.value = this.on ? DEFAULT_SOUND_VOLUME : 0;
       const comp = ctx.createDynamicsCompressor();
       comp.threshold.value = -18;
       comp.knee.value = 14;
@@ -3166,7 +3168,7 @@
       if (!this.ctx) return;
       const t = this.ctx.currentTime;
       this.out.gain.cancelScheduledValues(t);
-      this.out.gain.setTargetAtTime(on ? 1 : 0, t, 0.05);
+      this.out.gain.setTargetAtTime(on ? DEFAULT_SOUND_VOLUME : 0, t, 0.05);
       if (on) this.resume();
     }
 
@@ -3512,6 +3514,7 @@
       const shotP = this.loadShot();
       this.view = new View(this.env);
       this.engine = new Engine(this.view);
+      this.engine.speed = 1;
       this.sfx = new Sound();
       this.sfx.init();
       this.engine.sfx = this.sfx;
@@ -3620,6 +3623,8 @@
       }, true);
       // browsers only let audio start after a click/keypress on the page
       on(window, "pointerdown", () => this.unlockSound(), true);
+      // A swipe should unlock audio on Android/iOS without an on-screen control.
+      on(window, "touchstart", () => this.unlockSound(), { passive: true });
       if (!this.env.isRoot) {
         on(this.view.host, "wheel", (e) => {
           e.preventDefault();
