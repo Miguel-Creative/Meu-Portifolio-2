@@ -3,7 +3,6 @@ import Link from "next/link";
 
 //Third's librarys
 import styled from "styled-components";
-import Typed from "react-typed";
 import { useTheme } from "styled-components";
 import ProgressBar from "react-progressbar-on-scroll";
 
@@ -261,7 +260,7 @@ export default function HomePage() {
 					<TitleLandingContainer>
 						<TextBrandingDev>Dev Frontend | Fullstack</TextBrandingDev>
 						{/* <SubTitleLanding>{language.landingPage.apresentationText}</SubTitleLanding> */}
-						<Typed strings={[language.landingPage.firstTypeText]} typeSpeed={30} className="type-string " />
+						<span className="type-string">{language.landingPage.firstTypeText}</span>
 						<SubTitleLanding>{language.landingPage.resumeText}</SubTitleLanding>
 						<ChipTechWrapper>
 							<span className="chip-tech">React</span>
