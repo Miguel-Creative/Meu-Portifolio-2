@@ -166,9 +166,7 @@ export default function LayoutTemplate({ children }) {
 				<Fade top delay={100} duration={200}>
 					<Link href="#section-home" passHref>
 						<LogoContainer>
-							<LogoText>
-								Israel Miguel
-							</LogoText>
+							<LogoText><CaracteresLogo>&lt;</CaracteresLogo>IM<CaracteresLogo>/&gt;</CaracteresLogo></LogoText>
 						</LogoContainer>
 					</Link>
 				</Fade>
