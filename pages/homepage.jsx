@@ -149,7 +149,11 @@ const ButtonSaibaMais = styled.button`
 	}
 `;
 
-const ButtonDownloadCV = styled.button`
+const ButtonDownloadCV = styled.a`
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
 	z-index: 1;
 	position: relative;
 	width: 200px;
@@ -235,7 +239,7 @@ const WrapperButtons = styled.div`
 
 export default function HomePage() {
 	const theme = useTheme();
-	const { language } = useContext(SettingsContext);
+	const { language, languageCode } = useContext(SettingsContext);
 
 
 	return (
@@ -268,7 +272,7 @@ export default function HomePage() {
 							<Link href="#section-sobre-mim" passHref>
 								<ButtonSaibaMais>{language.landingPage.buttonText}</ButtonSaibaMais>
 							</Link>
-							{/* Disponibilizaremos o currículo assim que Israel Miguel o fornecer. */}
+							<ButtonDownloadCV href="/pdf/Curriculo-Israel-Miguel.pdf" download="Curriculo-Israel-Miguel.pdf" aria-label={languageCode === "en" ? "Download Israel Miguel resume (PDF)" : "Baixar currículo de Israel Miguel (PDF)"}>{languageCode === "en" ? "Download CV" : "Baixar currículo"}</ButtonDownloadCV>
 						</WrapperButtons>
 					</TitleLandingContainer>
 					<ContainerAnimation>
