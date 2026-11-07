@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import Image from "next/image";
 import styled from "styled-components";
+import SwarmSoundButton from "@/components/SwarmSoundButton";
 
 //Contexto
 import { SettingsContext } from "@/context/SettingsContext";
@@ -87,6 +88,7 @@ export default function LanguageSwitchButton() {
 				</label>
 			</SwitchButton>
 			<Image src="/img/enus.png" alt="Bandeira dos Estados unidos da América" width={28} height={28} objectFit="cover" />
+			<SwarmSoundButton languageCode={languageCode} />
 		</LanguageWrapper>
 	);
 }
