@@ -3103,7 +3103,12 @@
       if (this.ctx) return true;
       try {
         const Ctx = window.AudioContext || window.webkitAudioContext;
-        this.ctx = offline || new Ctx({ latencyHint: "interactive" });
+        // If the visitor touched the page during hydration/scan, reuse the
+        // context unlocked by the critical head script (user gesture).
+        const early = !offline && window.__swarmEarlyAudioContext &&
+          window.__swarmEarlyAudioContext.state !== "closed" ? window.__swarmEarlyAudioContext : null;
+        this.ctx = offline || early || new Ctx({ latencyHint: "interactive" });
+        if (early) window.__swarmEarlyAudioContext = null;
       } catch (_) {
         return false;
       }
@@ -3175,7 +3180,16 @@
     }
 
     resume() {
-      if (this.ctx && this.ctx.state === "suspended" && this.ctx.resume) this.ctx.resume().catch(() => {});
+      if (!this.ctx || !this.ctx.resume || this.ctx.state === "running" || this.ctx.state === "closed") return;
+      // Calling resume() synchronously from pointerdown/touchstart/keydown is
+      // required on browsers that block Web Audio autoplay.
+      this.ctx.resume().then(() => {
+        if (!this.on || this.ctx.state !== "running" || this.unlockedCue) return;
+        // Sound that would have played while the context was suspended is lost.
+        // A short cue confirms activation; later construction notes play normally.
+        this.unlockedCue = true;
+        this.start();
+      }).catch(() => {});
     }
 
     get blocked() {
@@ -3521,7 +3535,8 @@
       this.view = new View(this.env);
       this.engine = new Engine(this.view);
       this.engine.speed = 1;
-      this.sfx = new Sound();
+      this.sfx = retainedSound || new Sound();
+      retainedSound = null;
       this.sfx.init();
       this.engine.sfx = this.sfx;
       this.engine.onStart = () => this.view.intro.classList.add("gone");
@@ -3531,8 +3546,15 @@
       this.raf = requestAnimationFrame((t) => this.frame(t));
       await nextFrame();
       this.renderSoundBtn();
-      // No automatic sound or opening sting.
+      // Ensure the canvas is opaque before revealing the SSR/React page below.
+      // The site never flashes pre-rendered before its cursors appear.
       this.view.bg.classList.add("on");
+      if (document.documentElement.classList.contains("swarm-preparing")) {
+        this.view.bg.style.transition = "none";
+        this.view.bg.style.opacity = "1";
+        document.documentElement.classList.remove("swarm-preparing");
+        if (window.__swarmFirstPaintFailsafe) clearTimeout(window.__swarmFirstPaintFailsafe);
+      }
       // No standalone introduction overlay.
       // Never show the extension toolbar on any viewport (desktop or mobile).
       this.view.hud.classList.remove("on");
@@ -3640,8 +3662,10 @@
       }, true);
       // browsers only let audio start after a click/keypress on the page
       on(window, "pointerdown", () => this.unlockSound(), true);
-      // A swipe should unlock audio on Android/iOS without an on-screen control.
+      // Swipes, click/touch, and keyboard actions can unlock Web Audio.
       on(window, "touchstart", () => this.unlockSound(), { passive: true });
+      on(window, "click", () => this.unlockSound(), true);
+      on(window, "wheel", () => this.unlockSound(), { passive: true });
       if (!this.env.isRoot) {
         on(this.view.host, "wheel", (e) => {
           e.preventDefault();
@@ -3859,11 +3883,15 @@
 
   let app = null;
   let lastShot = null;
+  let retainedSound = null;
 
   function start() {
     if (app) return;
     app = new App();
-    app.run().catch((err) => console.error("[swarm-rebuild]", err));
+    app.run().catch((err) => {
+      document.documentElement.classList.remove("swarm-preparing");
+      console.error("[swarm-rebuild]", err);
+    });
   }
 
   function stop(reveal) {
@@ -3881,7 +3909,9 @@
       cancelAnimationFrame(a.raf);
       for (const u of a.unbinds || []) u();
       a.view.host.remove();
-      if (a.sfx) a.sfx.close(0.1);
+      // Retain the running AudioContext; creating another on the next frame
+      // would suspend it again and silently lose audio on every locale change.
+      if (a.sfx) retainedSound = a.sfx;
       // rebuild from where the first run started so screenshot crops line up again
       if (lastShot) a.env.scrollTo(lastShot.at.sy, lastShot.at.sx);
     }
@@ -3895,6 +3925,7 @@
     },
     start,
     stop,
+    restart,
     get app() {
       return app;
     },
