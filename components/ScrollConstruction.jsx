@@ -15,6 +15,25 @@ export default function ScrollConstruction() {
 
     let disposed = false;
     const scriptId = "portfolio-swarm-engine";
+    const showPage = () => {
+      document.documentElement.classList.remove("swarm-preparing");
+      if (window.__swarmFirstPaintFailsafe) clearTimeout(window.__swarmFirstPaintFailsafe);
+    };
+
+    // The React language state changes instantly but the Swarm uses an immutable
+    // snapshot. Rebuild that snapshot after translation has been committed.
+    const handleLanguageChange = () => {
+      const swarm = window.__swarmRebuild;
+      if (!swarm?.app || swarm.app.complete) return;
+      // Keep the original site covered while replacing the old-language scene.
+      document.documentElement.classList.add("swarm-preparing");
+      requestAnimationFrame(() => {
+        if (disposed) return showPage();
+        if (swarm.app && !swarm.app.complete) swarm.restart();
+        else showPage();
+      });
+    };
+    window.addEventListener("portfolio:language-changed", handleLanguageChange);
 
     function start() {
       if (disposed || !window.__swarmRebuild) return;
@@ -37,13 +56,18 @@ export default function ScrollConstruction() {
       script.src = "/swarm-rebuild.js";
       script.async = true;
       script.addEventListener("load", start, { once: true });
-      script.addEventListener("error", () => console.error("[portfolio] Swarm script could not be loaded"), { once: true });
+      script.addEventListener("error", () => {
+        console.error("[portfolio] Swarm script could not be loaded");
+        showPage();
+      }, { once: true });
       document.body.appendChild(script);
     }
 
     return () => {
       disposed = true;
+      window.removeEventListener("portfolio:language-changed", handleLanguageChange);
       if (script) script.removeEventListener("load", start);
+      showPage();
       if (window.__swarmRebuild && window.__swarmRebuild.app) window.__swarmRebuild.stop(false);
     };
   }, [router.pathname]);
