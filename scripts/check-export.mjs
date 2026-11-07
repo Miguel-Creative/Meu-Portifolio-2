@@ -113,6 +113,34 @@ try{
   await sleep(2400);
   report.initial=await ev(stats);
   report.identity=await ev("(()=>{const a=window.__swarmRebuild.app;const photo=document.querySelector('img[alt*=Israel]');const imgBox=photo?.closest('.img');return {soundEnabled:a.sfx?.on||false,volume:a.sfx?.out?.gain?.value||0,speed:a.engine?.speed,hudDisplay:getComputedStyle(a.view.hud).display,photo:photo?.getAttribute('src')||null,portraitBackground:imgBox?getComputedStyle(imgBox).backgroundColor:null,siteBackground:getComputedStyle(document.querySelector('main')).backgroundColor,name:document.querySelector('header h3')?.textContent||'',mainName:document.querySelector('.type-string')?.textContent||'',screenWidth:innerWidth,screenHeight:innerHeight}})()");
+  if(process.env.SWARM_SOUND_TEST === "1") {
+    // Exercise the visible button with trusted mouse input; element.click()
+    // does not grant the user-activation required by Web Audio.
+    const state=()=>ev("(()=>{const a=window.__swarmRebuild?.app;const s=window.__swarmRebuild?.soundState?.();return {state:s,context:a?.sfx?.ctx?.state||null,volume:a?.sfx?.out?.gain?.value||0}})()");
+    const target=await ev("(()=>{const b=[...document.querySelectorAll('[data-testid=swarm-sound-toggle]')].find(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&r.top>=0&&r.bottom<=innerHeight});if(!b)return null;const r=b.getBoundingClientRect();return{x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2),label:b.getAttribute('aria-label'),visible:getComputedStyle(b).visibility,order:b.parentElement?.lastElementChild===b}})()");
+    if(!target||!target.order||target.visible!=="visible")throw Error("The visible sound button is not next to the English flag: "+JSON.stringify(target));
+    const tap=async()=>{
+      await send("Input.dispatchMouseEvent",{type:"mouseMoved",x:target.x,y:target.y});
+      await send("Input.dispatchMouseEvent",{type:"mousePressed",x:target.x,y:target.y,button:"left",clickCount:1});
+      await send("Input.dispatchMouseEvent",{type:"mouseReleased",x:target.x,y:target.y,button:"left",clickCount:1});
+    };
+    report.soundBefore=await state();
+    if(!report.soundBefore.state?.loaded)throw Error("Swarm sound controller did not load");
+    if(!report.soundBefore.state.audible) {
+      await tap();
+      await poll(async()=>Boolean((await state()).state?.audible),40,170);
+    }
+    report.soundOn=await state();
+    await tap();
+    await poll(async()=>!(await state()).state?.enabled,40,170);
+    report.soundOff=await state();
+    await tap();
+    await poll(async()=>Boolean((await state()).state?.audible),40,170);
+    report.soundRestored=await state();
+    if(!report.soundOn.state.audible||report.soundOff.state.enabled||!report.soundRestored.state.audible)
+      throw Error("Sound toggle did not work: "+JSON.stringify(report));
+    console.log("SWARM_SOUND_BUTTON_OK",JSON.stringify({before:report.soundBefore,on:report.soundOn,off:report.soundOff,restored:report.soundRestored}));
+  }
   // No wheel, touch or scroll event here: prove the first screen builds on load.
   await sleep(2700);
   report.autostart=await ev(stats);
