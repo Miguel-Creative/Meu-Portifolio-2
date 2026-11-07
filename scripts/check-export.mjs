@@ -86,6 +86,22 @@ try{
     await send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:3,mobile:true});
     await send("Page.reload",{ignoreCache:true});
   }
+  if(process.env.SWARM_FLASH_TEST === "1") {
+    // Intentionally block all Next.js client-side chunks to simulate slow
+    // hydration. The raw server-rendered portfolio must remain invisible.
+    await send("Page.enable");
+    await send("Network.enable");
+    await send("Network.setBlockedURLs",{urls:["*/_next/static/*"]});
+    await send("Page.reload",{ignoreCache:true});
+    await poll(async()=>await ev("document.readyState==='complete' && !!document.getElementById('__next')"),80,160);
+    report.firstPaint=await ev("(()=>({hidden:document.documentElement.classList.contains('swarm-preparing'),opacity:getComputedStyle(document.getElementById('__next')).opacity,serverText:document.getElementById('__next')?.textContent?.includes('Israel Miguel'),root:!!document.getElementById('swarm-preboot')}))()");
+    if(!report.firstPaint.hidden||report.firstPaint.opacity!=="0"||!report.firstPaint.serverText||!report.firstPaint.root)
+      throw Error("The SSR page flashed before the Swarm could mount: "+JSON.stringify(report.firstPaint));
+    console.log("SWARM_FIRST_PAINT_HIDDEN_OK",JSON.stringify(report.firstPaint));
+    await send("Network.setBlockedURLs",{urls:[]});
+    await send("Page.reload",{ignoreCache:true});
+    errors.length=0; // Ignore expected missing-script errors during the blocked phase.
+  }
   const stats="(()=>{const app=window.__swarmRebuild?.app,eng=app?.engine,root=document.querySelector('swarm-rebuild');return{ready:!!eng?.ready,started:!!eng?.started,done:eng?.doneCount||0,total:eng?.tasks?.length||0,items:eng?.items?.length||0,paused:!!eng?.scrollPaused,flocking:!!eng?.flocking,frontier:eng?.frontier||0,y:scrollY,root:!!root,oldUI:!!document.querySelector('#swarm-construction-layer'),allSections:document.querySelectorAll('main').length,docHeight:document.documentElement.scrollHeight}})()";
   try {
     await poll(async()=>await ev("!!window.__swarmRebuild?.app?.engine?.ready"),130,220);
