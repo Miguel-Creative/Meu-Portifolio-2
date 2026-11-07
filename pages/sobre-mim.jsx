@@ -222,7 +222,7 @@ const GithubStatsCard = styled.div`
 	}
 `;
 
-const ButtonCV = styled.button`
+const ButtonCV = styled.a`
 	z-index: 1;
 	position: relative;
 	width: 200px;
@@ -265,7 +265,7 @@ const SectionSobreMim = styled.section`
 `;
 
 export default function SobreMim(props) {
-	const { language } = useContext(SettingsContext);
+	const { language, languageCode } = useContext(SettingsContext);
 	const [githubUserData, setGithubUserData] = useState({});
 
 	useEffect(() => {
@@ -322,7 +322,7 @@ export default function SobreMim(props) {
 							<p>{language.aboutMePage.paragraph_three}</p>
 							<div className="tech-and-cv">
 								<SocialNetworkRowStack />
-								{/* O botão CV será restaurado com o currículo de Israel Miguel. */}
+								<ButtonCV href="/pdf/Curriculo-Israel-Miguel.pdf" download="Curriculo-Israel-Miguel.pdf" aria-label={languageCode === "en" ? "Download Israel Miguel resume (PDF)" : "Baixar currículo de Israel Miguel (PDF)"}>{languageCode === "en" ? "Download CV" : "Baixar currículo"}</ButtonCV>
 							</div>
 						</ScrollAnimation>
 					</div>
