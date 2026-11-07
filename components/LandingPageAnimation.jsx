@@ -5,8 +5,8 @@ const Lottie = dynamic(() => import("react-lottie"), { ssr: false });
 import { useTheme } from "styled-components";
 
 //Lotties
-import AnimationYellowBackground from "@/public/lotties/landing-page-yellow.json";
-import AnimationLightBackground from "@/public/lotties/landing-page-light.json";
+import AnimationYellowBackground from "@/public/lotties/landing-page-crimson-dark.json";
+import AnimationLightBackground from "@/public/lotties/landing-page-crimson-light.json";
 
 //Caso necessário alterar as cores da animação
 // https://editor.lottiefiles.com/?fileUrl=https://assets9.lottiefiles.com/packages/lf20_p1qiuawe.json&origin=web&hash=NzI4NTYtc29mdHdhcmUtZGV2ZWxvcG1lbnQ=&src=https://lottiefiles.com/upload-file/editor

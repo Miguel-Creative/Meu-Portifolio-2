@@ -3510,6 +3510,7 @@
       this.revealUntil = 0;
       this.firstViewportEnd = 0;
       this.lastReveal = -1;
+      this.heroNameAnnounced = false;
     }
 
     async loadShot() {
@@ -3731,6 +3732,18 @@
       }
       this.revealUntil = Math.max(this.revealUntil, Math.max(0, firstPendingY - 2));
       if (this.revealUntil >= this.firstViewportEnd - 3) E.firstViewportBoost = false;
+
+      // Replay the original typed-name effect only after the actual name has
+      // been constructed and revealed by the multiplayer cursors.
+      const heroName = document.getElementById("portfolio-hero-name");
+      if (!this.heroNameAnnounced && heroName) {
+        const r = heroName.getBoundingClientRect();
+        const nameBottom = vp.sy + r.bottom;
+        if (r.bottom > 0 && r.top < vp.vh && this.revealUntil >= nameBottom - 2) {
+          this.heroNameAnnounced = true;
+          window.dispatchEvent(new Event("portfolio:hero-name-built"));
+        }
+      }
       const revealedPx = Math.max(0, Math.min(vp.vh, this.revealUntil - vp.sy));
       const next = Math.round(revealedPx);
       if (next === this.lastReveal) return;

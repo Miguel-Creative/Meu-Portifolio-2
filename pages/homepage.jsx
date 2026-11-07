@@ -9,6 +9,7 @@ import ProgressBar from "react-progressbar-on-scroll";
 //Custom components
 import Head from "@/components/Head";
 import LandingAnimation from "@/components/LandingPageAnimation";
+import HeroAnimatedName from "@/components/HeroAnimatedName";
 import FloatNavigationBar from "@/components/FloatNavigationBar";
 import ScrollDownAnimation from "@/components/ScrollDownAnimation";
 //import SocialNetworkRowStack from "@/components/SocialNetworkRowStack";
@@ -130,9 +131,9 @@ const ButtonSaibaMais = styled.button`
 	transition: all 0.3s ease;
 	font-size: ${(props) => props.theme.fontSizes.lg};
 	border: none;
-	color: ${(props) => props.theme.colors.background};
+	color: #FFFFFF;
 	border-radius: 4px;
-	background-color: ${(props) => props.theme.colors.branding};
+	background-color: ${(props) => props.theme.colors.brandingDarker};
 	font-weight: 700;
 
 	&:hover {
@@ -249,23 +250,19 @@ export default function HomePage() {
 				<ProgressBar color={theme.colors.branding} height={5} />
 				<Head
 					title="Portfólio de projetos de programação"
-					metaDescription="Portfólio de desenvolvimento de software de Israel Miguel."
-					keywords="Israel Miguel, Programação, Portfólio, Dev, Desenvolvedor de software, Fullstack, Frontend"
+					metaDescription={languageCode === "en" ? "Israel Miguel — Full Stack developer building SaaS platforms, mobile solutions and AI integrations." : "Israel Miguel — Desenvolvimento Full Stack, plataformas SaaS, soluções mobile e integrações com inteligência artificial."}
+					keywords="Israel Miguel, Full Stack, SaaS, Mobile, Android, iOS, Inteligência Artificial, TypeScript, React, Node.js, Python, MCP"
 				/>
 				<LandingPageContainer>
 					<TitleLandingContainer>
-						<TextBrandingDev>Dev Frontend | Fullstack</TextBrandingDev>
+						<TextBrandingDev>{languageCode === "en" ? "Full Stack Developer | SaaS, Mobile & AI" : "Desenvolvedor Full Stack | SaaS, Mobile & IA"}</TextBrandingDev>
 						{/* <SubTitleLanding>{language.landingPage.apresentationText}</SubTitleLanding> */}
-						<span className="type-string">{language.landingPage.firstTypeText}</span>
+						<HeroAnimatedName name={language.landingPage.firstTypeText} className="type-string" />
 						<SubTitleLanding>{language.landingPage.resumeText}</SubTitleLanding>
 						<ChipTechWrapper>
-							<span className="chip-tech">React</span>
-							<span className="chip-tech">Python</span>
-							<span className="chip-tech">Javascript</span>
-							<span className="chip-tech">Next.js</span>
-							<span className="chip-tech">Django</span>
-							<span className="chip-tech">Typescript</span>
-							<span className="chip-tech">Node.js</span>
+							{["TypeScript", "React", "Node.js", "Python", "PostgreSQL", "Docker", "MCP", "Capacitor"].map((tech) => (
+								<span className="chip-tech" key={tech}>{tech}</span>
+							))}
 						</ChipTechWrapper>
 
 						<WrapperButtons>
