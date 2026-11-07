@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext } from "react";
 import Image from "next/image";
 import styled from "styled-components";
 
@@ -74,20 +74,15 @@ const LanguageWrapper = styled.div`
 `;
 
 export default function LanguageSwitchButton() {
-	const { changeLanguageLocalization } = useContext(SettingsContext);
-	const [checked, setChecked] = useState(false);
-
-	function handleCheckSwitch() {
-		setChecked((checked) => !checked);
-		changeLanguageLocalization();
-	}
+	const { changeLanguageLocalization, languageCode } = useContext(SettingsContext);
+	const checked = languageCode === "en";
 
 	return (
 		<LanguageWrapper>
 			<Image src="/img/ptbr.png" alt="Bandeira do Brasil" width={28} height={28} objectFit="cover" />
 			<SwitchButton>
 				<label className="switch">
-					<input type="checkbox" checked={checked} onClick={handleCheckSwitch} readOnly data-splitbee-event="language-change" />
+					<input type="checkbox" checked={checked} onChange={changeLanguageLocalization} aria-label="Alternar idioma português e inglês / Switch Portuguese and English" data-splitbee-event="language-change" />
 					<span className="slider round"></span>
 				</label>
 			</SwitchButton>
