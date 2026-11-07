@@ -125,7 +125,7 @@ try{
     await send("Input.dispatchMouseEvent",{type:"mouseReleased",x:target.x,y:target.y,button:"left",clickCount:1});
     await poll(async()=>await ev("document.documentElement.lang==='en' && document.querySelector('header')?.textContent?.includes('SERVICES')"),75,120);
     await poll(async()=>await ev("window.__swarmRebuild.app?.engine?.ready && window.__swarmRebuild.app?.t0!=="+report.beforeLanguage.sessionStart),100,180);
-    report.afterLanguage=await ev("(()=>{const a=window.__swarmRebuild.app;return {locale:document.documentElement.lang,soundState:a.sfx.ctx?.state,soundEnabled:a.sfx.on,volume:a.sfx.out?.gain?.value,modelHasEnglish:a.model?.items?.some(i=>i.kind==='text'&&i.full?.textContent?.includes('SERVICES'))||false,started:a.engine.started,swarmPreparing:document.documentElement.classList.contains('swarm-preparing')}})()");
+    report.afterLanguage=await ev("(()=>{const a=window.__swarmRebuild.app;return {locale:document.documentElement.lang,soundState:a.sfx.ctx?.state,soundEnabled:a.sfx.on,volume:a.sfx.out?.gain?.value,modelHasEnglish:a.model?.items?.some(i=>i.kind==='text'&&(/SERVICES|Learn more|Fullstack developer/.test(i.full?.textContent||'')))||false,started:a.engine.started,swarmPreparing:document.documentElement.classList.contains('swarm-preparing')}})()");
     if(report.afterLanguage.locale!=="en"||!report.afterLanguage.modelHasEnglish)
       throw Error("The reconstructed visible model did not switch to English");
     if(report.afterLanguage.soundState!=="running")
