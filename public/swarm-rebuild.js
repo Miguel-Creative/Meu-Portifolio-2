@@ -3177,6 +3177,7 @@
       this.out.gain.cancelScheduledValues(t);
       this.out.gain.setTargetAtTime(on ? DEFAULT_SOUND_VOLUME : 0, t, 0.05);
       if (on) this.resume();
+      emitSoundState();
     }
 
     resume() {
@@ -3189,7 +3190,7 @@
         // A short cue confirms activation; later construction notes play normally.
         this.unlockedCue = true;
         this.start();
-      }).catch(() => {});
+      }).then(() => emitSoundState(), () => emitSoundState());
     }
 
     get blocked() {
@@ -3539,6 +3540,7 @@
       this.sfx = retainedSound || new Sound();
       retainedSound = null;
       this.sfx.init();
+      emitSoundState();
       this.engine.sfx = this.sfx;
       this.engine.onStart = () => this.view.intro.classList.add("gone");
       this.engine.onComplete = () => this.onComplete();
@@ -3904,6 +3906,41 @@
   let lastShot = null;
   let retainedSound = null;
 
+  // Public control for the accessible button in the site's real header.
+  // The extension's hidden HUD is not required to unlock browser audio.
+  function soundState() {
+    const s = (app && app.sfx) || retainedSound;
+    return {
+      enabled: s ? s.on : soundPref,
+      audible: Boolean(s && s.ready()),
+      blocked: Boolean(s && s.blocked),
+      loaded: Boolean(s),
+      available: Boolean(window.AudioContext || window.webkitAudioContext),
+    };
+  }
+
+  function emitSoundState() {
+    window.dispatchEvent(new CustomEvent("portfolio:swarm-sound-change", { detail: soundState() }));
+  }
+
+  function setSoundEnabled(enabled) {
+    enabled = Boolean(enabled);
+    soundPref = enabled;
+    const s = (app && app.sfx) || retainedSound;
+    if (s) {
+      if (!s.ctx) s.init();
+      const alreadyAudible = Boolean(s.ready());
+      s.setOn(enabled);
+      // A gesture on the visible button is allowed to unlock Web Audio.
+      // If audio was already running, play a small confirmation chord when
+      // re-enabling sound after a mute.
+      if (enabled && s.ready() && !alreadyAudible) s.start();
+      if (app && app.renderSoundBtn) app.renderSoundBtn();
+    }
+    emitSoundState();
+    return soundState();
+  }
+
   function start() {
     if (app) return;
     app = new App();
@@ -3945,6 +3982,8 @@
     start,
     stop,
     restart,
+    soundState,
+    setSoundEnabled,
     get app() {
       return app;
     },
