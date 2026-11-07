@@ -13,6 +13,11 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const out = path.join(process.cwd(),"out");
 if(!fs.existsSync(path.join(out,"index.html")))throw Error("Missing static export: out/index.html");
 if(!fs.existsSync(path.join(out,"swarm-rebuild.js")))throw Error("Missing Swarm asset in static export");
+const exportedHtml=fs.readFileSync(path.join(out,"index.html"),"utf8");
+if(!exportedHtml.includes("swarm-first-paint")||!exportedHtml.includes("swarm-preboot"))
+  throw Error("Critical first-paint hiding tags were not rendered in the HTML head");
+if(exportedHtml.indexOf("swarm-preboot")>exportedHtml.indexOf('id="__next"'))
+  throw Error("The preboot script must precede the React content in initial HTML");
 
 const browser = [process.env.CHROME_PATH,
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -109,6 +114,26 @@ try{
   await ev("window.scrollTo(0,2500);true");
   await sleep(2600);
   report.resume=await ev(stats);
+  if(process.env.SWARM_LOCALE_TEST === "1") {
+    // A real Chrome mouse event (not element.click) is required for Web Audio
+    // user activation. The selector must also refresh the visible Swarm model.
+    report.beforeLanguage=await ev("(()=>{const a=window.__swarmRebuild.app;return{locale:document.documentElement.lang,soundState:a.sfx.ctx?.state,sessionStart:a.t0,started:a.engine.started}})()");
+    const target=await ev("(()=>{const els=[...document.querySelectorAll('header label.switch')];const el=els.find(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&r.top>=0&&r.bottom<=innerHeight});if(!el)return null;const r=el.getBoundingClientRect();return{x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)}})()");
+    if(!target)throw Error("Visible language control not found");
+    await send("Input.dispatchMouseEvent",{type:"mouseMoved",x:target.x,y:target.y});
+    await send("Input.dispatchMouseEvent",{type:"mousePressed",x:target.x,y:target.y,button:"left",clickCount:1});
+    await send("Input.dispatchMouseEvent",{type:"mouseReleased",x:target.x,y:target.y,button:"left",clickCount:1});
+    await poll(async()=>await ev("document.documentElement.lang==='en' && document.querySelector('header')?.textContent?.includes('SERVICES')"),75,120);
+    await poll(async()=>await ev("window.__swarmRebuild.app?.engine?.ready && window.__swarmRebuild.app?.t0!=="+report.beforeLanguage.sessionStart),100,180);
+    report.afterLanguage=await ev("(()=>{const a=window.__swarmRebuild.app;return {locale:document.documentElement.lang,soundState:a.sfx.ctx?.state,soundEnabled:a.sfx.on,volume:a.sfx.out?.gain?.value,modelHasEnglish:a.model?.items?.some(i=>i.kind==='text'&&i.full?.textContent?.includes('SERVICES'))||false,started:a.engine.started,swarmPreparing:document.documentElement.classList.contains('swarm-preparing')}})()");
+    if(report.afterLanguage.locale!=="en"||!report.afterLanguage.modelHasEnglish)
+      throw Error("The reconstructed visible model did not switch to English");
+    if(report.afterLanguage.soundState!=="running")
+      throw Error("Web Audio did not unlock on a trusted click: "+JSON.stringify(report.afterLanguage));
+    if(report.afterLanguage.swarmPreparing)
+      throw Error("The page remained hidden after locale rebuild");
+    console.log("SWARM_LANGUAGE_AUDIO_OK",JSON.stringify({before:report.beforeLanguage,after:report.afterLanguage}));
+  }
   if(process.env.SWARM_FULL_TEST === "1") {
     await ev("window.__swarmRebuild.app.engine.speed=3;true");
     const totalHeight=await ev("document.documentElement.scrollHeight");
