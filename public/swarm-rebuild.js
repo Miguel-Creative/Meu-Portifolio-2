@@ -3664,10 +3664,16 @@
         this.unlockSound();
       }, true);
       // browsers only let audio start after a click/keypress on the page
-      on(window, "pointerdown", () => this.unlockSound(), true);
+      on(window, "pointerdown", (e) => {
+        if (!e.target?.closest?.('[data-testid="swarm-sound-toggle"]')) this.unlockSound();
+      }, true);
       // Swipes, click/touch, and keyboard actions can unlock Web Audio.
-      on(window, "touchstart", () => this.unlockSound(), { passive: true });
-      on(window, "click", () => this.unlockSound(), true);
+      on(window, "touchstart", (e) => {
+        if (!e.target?.closest?.('[data-testid="swarm-sound-toggle"]')) this.unlockSound();
+      }, { passive: true });
+      on(window, "click", (e) => {
+        if (!e.target?.closest?.('[data-testid="swarm-sound-toggle"]')) this.unlockSound();
+      }, true);
       on(window, "wheel", () => this.unlockSound(), { passive: true });
       if (!this.env.isRoot) {
         on(this.view.host, "wheel", (e) => {
