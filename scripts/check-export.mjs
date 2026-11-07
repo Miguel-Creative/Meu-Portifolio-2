@@ -87,7 +87,13 @@ try{
     await send("Page.reload",{ignoreCache:true});
   }
   const stats="(()=>{const app=window.__swarmRebuild?.app,eng=app?.engine,root=document.querySelector('swarm-rebuild');return{ready:!!eng?.ready,started:!!eng?.started,done:eng?.doneCount||0,total:eng?.tasks?.length||0,items:eng?.items?.length||0,paused:!!eng?.scrollPaused,flocking:!!eng?.flocking,frontier:eng?.frontier||0,y:scrollY,root:!!root,oldUI:!!document.querySelector('#swarm-construction-layer'),allSections:document.querySelectorAll('main').length,docHeight:document.documentElement.scrollHeight}})()";
-  await poll(async()=>await ev("!!window.__swarmRebuild?.app?.engine?.ready"),130,220);
+  try {
+    await poll(async()=>await ev("!!window.__swarmRebuild?.app?.engine?.ready"),130,220);
+  } catch (error) {
+    console.error("SWARM_BOOT_DEBUG",JSON.stringify(await ev("(()=>({ready:document.readyState,root:!!document.getElementById('__next'),swarmLoaded:!!window.__swarmRebuild,app:!!window.__swarmRebuild?.app,started:!!window.__swarmRebuild?.app?.engine?.started,stage:window.__swarmRebuild?.app?.timing||null,preparing:document.documentElement.classList.contains('swarm-preparing'),script:!!document.getElementById('portfolio-swarm-engine'),scriptSrc:document.getElementById('portfolio-swarm-engine')?.src}))()")));
+    console.error("CONSOLE_ERRORS",JSON.stringify(errors.slice(0,20)));
+    throw error;
+  }
   await sleep(2400);
   report.initial=await ev(stats);
   report.identity=await ev("(()=>{const a=window.__swarmRebuild.app;const photo=document.querySelector('img[alt*=Israel]');const imgBox=photo?.closest('.img');return {soundEnabled:a.sfx?.on||false,volume:a.sfx?.out?.gain?.value||0,speed:a.engine?.speed,hudDisplay:getComputedStyle(a.view.hud).display,photo:photo?.getAttribute('src')||null,portraitBackground:imgBox?getComputedStyle(imgBox).backgroundColor:null,siteBackground:getComputedStyle(document.querySelector('main')).backgroundColor,name:document.querySelector('header h3')?.textContent||'',mainName:document.querySelector('.type-string')?.textContent||'',screenWidth:innerWidth,screenHeight:innerHeight}})()");
