@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import Marquee from "react-fast-marquee";
+import useSwarmMarquee from "@/components/useSwarmMarquee";
 import styled from "styled-components";
 import { useTheme } from "styled-components";
 
@@ -60,7 +61,7 @@ const Carrousel = styled.div`
 	.slide svg {
 		width: 78px;
 		height: 78px;
-		color: ${(props) => (props.colorIcon == "brand" ? props.theme.colors.branding : props.theme.colors.backgroundSecondary)};
+		color: ${(props) => (props.colorIcon == "brand" ? props.theme.colors.branding : props.theme.name === "dark" ? "#6388B5" : "#617C9B")};
 		transition: all 0.3s ease;
 	}
 
@@ -85,11 +86,14 @@ const Carrousel = styled.div`
 
 export default function CarrouselTechs(props) {
 	const theme = useTheme();
+	const marqueeRef = useRef(null);
+	const playing = useSwarmMarquee(marqueeRef);
 
 	const { direction, colorIcon, speed } = props;
 
 	return (
-		<Marquee play={false} autoFill gradient loop={0} gradientColor={theme.colors.backgroundPageRgb} direction={direction} speed={speed}>
+		<div ref={marqueeRef} data-swarm-marquee="technologies" style={{ width: "100%" }}>
+		<Marquee play={playing} autoFill gradient loop={0} gradientColor={theme.colors.backgroundPageRgb} direction={direction} speed={speed}>
 			<Carrousel colorIcon={colorIcon}>
 				<div className="slide">
 					<Adobephotoshop />
@@ -213,5 +217,6 @@ export default function CarrouselTechs(props) {
 				</div>
 			</Carrousel>
 		</Marquee>
+		</div>
 	);
 }

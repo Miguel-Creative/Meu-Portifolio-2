@@ -3752,6 +3752,11 @@
       for (const el of [this.view.bg, this.view.under, this.view.port, this.view.over, this.view.ov, this.view.badges, this.view.rulers]) {
         if (el) el.style.clipPath = clip;
       }
+      // Allow native carousels to animate only after their exact DOM region has
+      // been drawn and revealed. Keep the original markup static for snapshotting.
+      window.dispatchEvent(new CustomEvent("portfolio:swarm-reveal-progress", {
+        detail: { until: this.revealUntil },
+      }));
     }
 
     frame(now) {
@@ -3822,6 +3827,7 @@
 
     onComplete() {
       this.complete = true;
+      window.dispatchEvent(new Event("portfolio:swarm-complete"));
       // Show the original working React page after the blueprint has been built.
       for (const el of [this.view.bg,this.view.under,this.view.world,this.view.over,this.view.ov,this.view.badges,this.view.rulers]) {
         if (el) el.style.opacity = "0";

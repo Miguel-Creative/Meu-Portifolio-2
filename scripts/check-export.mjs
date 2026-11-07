@@ -142,6 +142,24 @@ try{
   await ev("window.scrollTo(0,2500);true");
   await sleep(2600);
   report.resume=await ev(stats);
+  if(process.env.SWARM_MARQUEE_TEST === "1") {
+    const marqueeState=()=>ev("(()=>{const els=[...document.querySelectorAll('[data-swarm-marquee]')];return {swarmComplete:window.__swarmRebuild.app.complete,regions:els.map(el=>{const r=el.getBoundingClientRect(),m=el.querySelector('.marquee');return {top:Math.round(r.top+scrollY),bottom:Math.round(r.bottom+scrollY),play:m?getComputedStyle(m).animationPlayState:null,transform:m?getComputedStyle(m).transform:null}})}})()");
+    report.marquees={before:await marqueeState(),checks:[]};
+    if(report.marquees.before.regions.length!==2)throw Error("Expected both original technology marquees");
+    // Both sections must animate after being constructed, while the rest of
+    // the Swarm remains active. Verify the actual moving CSS transform.
+    for(let i=0;i<2;i++) {
+      await ev("window.scrollTo(0,document.querySelectorAll('[data-swarm-marquee]')["+i+"].getBoundingClientRect().top+scrollY-90);true");
+      await poll(async()=>(await marqueeState()).regions[i]?.play==="running",100,180);
+      const before=(await marqueeState()).regions[i].transform;
+      await sleep(760);
+      const after=(await marqueeState()).regions[i].transform;
+      if(before===after)throw Error("Marquee "+i+" is not physically moving");
+      report.marquees.checks.push({index:i,before,after});
+    }
+    if(report.marquees.before.swarmComplete)throw Error("Marquees were not tested during active construction");
+    console.log("SWARM_MARQUEES_MOVING_OK",JSON.stringify(report.marquees));
+  }
   if(process.env.SWARM_LOCALE_TEST === "1") {
     // A real Chrome mouse event (not element.click) is required for Web Audio
     // user activation. The selector must also refresh the visible Swarm model.
