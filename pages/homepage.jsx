@@ -164,6 +164,7 @@ const ButtonDownloadCV = styled.a`
 	/* border: 2px solid ${(props) => props.theme.colors.branding}; */
 	border: none;
 	color: ${(props) => props.theme.colors.branding};
+	border: 1px solid ${(props) => props.theme.colors.branding};
 	border-radius: 4px;
 	background-color: ${(props) => props.theme.colors.backgroundSecondary};
 	font-weight: 700;
@@ -194,7 +195,8 @@ const SectionHomePage = styled.section`
 const TextBrandingDev = styled.span`
 	font-weight: 700;
 	color: ${(props) => props.theme.colors.branding};
-	font-size: 16px;
+	font-size: 17px;
+	letter-spacing: 0.15px;
 	margin-bottom: 12px;
 
 	@media (max-width: 601px) {
@@ -216,11 +218,19 @@ const ChipTechWrapper = styled.span`
 	}
 
 	.chip-tech {
-		font-size: 14px;
-		padding: 2px 8px;
-		border-radius: 4px;
+		font-size: 15px;
+		font-weight: 600;
+		line-height: 1.35;
+		padding: 5px 10px;
+		border-radius: 6px;
 		color: ${(props) => props.theme.colors.branding};
-		background-color: ${(props) => props.theme.colors.backgroundSecondary};
+		background-color: ${(props) => props.theme.colors.backgroundTertiary};
+		border: 1px solid ${(props) => props.theme.colors.backgroundSecondary};
+
+		@media (max-width: 601px) {
+			font-size: 14px;
+			padding: 5px 9px;
+		}
 	}
 `;
 

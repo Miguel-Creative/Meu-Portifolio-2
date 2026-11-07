@@ -126,11 +126,11 @@ try{
     throw Error("First screen not fully revealed as native DOM while stationary: "+JSON.stringify(report.reveal));
   if(!report.reveal.clip.startsWith("inset("))throw Error("No progressive reveal clip was applied");
   await poll(async()=>await ev("(()=>{const n=document.getElementById('portfolio-hero-name');return !!n && n.dataset.typingComplete==='yes' && window.__swarmRebuild.app.heroNameAnnounced===true})()"),36,130);
-  report.crimson=await ev("(()=>{const n=document.getElementById('portfolio-hero-name');const chips=[...document.querySelectorAll('.chip-tech')].map(e=>e.textContent);return{name:n?.getAttribute('aria-label'),color:n?getComputedStyle(n).color:null,typingCompleted:n?.dataset.typingComplete,chips,heading:document.querySelector('#section-home')?.textContent?.includes('SaaS, Mobile & IA')}})()");
-  if(report.crimson.name!=='Israel Miguel'||report.crimson.color!=='rgb(230, 57, 70)'||!report.crimson.heading)
-    throw Error('Crimson palette, title or typewriter did not render correctly: '+JSON.stringify(report.crimson));
+  report.azure=await ev("(()=>{const n=document.getElementById('portfolio-hero-name');const chips=[...document.querySelectorAll('.chip-tech')].map(e=>e.textContent);return{name:n?.getAttribute('aria-label'),color:n?getComputedStyle(n).color:null,typingCompleted:n?.dataset.typingComplete,chips,heading:document.querySelector('#section-home')?.textContent?.includes('SaaS, Mobile & IA')}})()");
+  if(report.azure.name!=='Israel Miguel'||report.azure.color!=='rgb(105, 183, 255)'||!report.azure.heading)
+    throw Error('Azure-blue palette, title or typewriter did not render correctly: '+JSON.stringify(report.azure));
   const technologies=['TypeScript','React','Node.js','Python','PostgreSQL','Docker','MCP','Capacitor'];
-  if(technologies.some(x=>!report.crimson.chips.includes(x)))throw Error('Missing featured technology: '+JSON.stringify(report.crimson.chips));
+  if(technologies.some(x=>!report.azure.chips.includes(x)))throw Error('Missing featured technology: '+JSON.stringify(report.azure.chips));
   await ev("window.scrollTo(0,1200);true");
   await sleep(2300);
   report.down=await ev(stats);

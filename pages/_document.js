@@ -8,7 +8,7 @@ const firstPaintCSS = `
   }
   html.swarm-preparing,
   html.swarm-preparing body {
-    background-color: #101114 !important;
+    background-color: #172133 !important;
   }
 `;
 
